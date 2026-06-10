@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 3 — Understanding IDs | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 3 of 12</span>
+  <h1>Understanding IDs</h1>
+  <p class="page-subtitle">Meta gives you at least two different IDs in the WhatsApp dashboard. They look similar, they're both long numbers, and they're used for completely different purposes. Mixing them up is one of the most common bugs.</p>
+
+  <div class="card">
+
+    <h2>The two IDs — what they are</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th></th><th>Phone Number ID</th><th>WABA ID</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Full name</strong></td>
+            <td>Phone Number ID</td>
+            <td>WhatsApp Business Account ID</td>
+          </tr>
+          <tr>
+            <td><strong>What it identifies</strong></td>
+            <td>A specific phone number registered under your account</td>
+            <td>The container account that holds one or more phone numbers</td>
+          </tr>
+          <tr>
+            <td><strong>Used in</strong></td>
+            <td>API calls to send or receive messages</td>
+            <td>Account-level operations: subscribing apps, creating templates, fetching business info</td>
+          </tr>
+          <tr>
+            <td><strong>Example endpoint</strong></td>
+            <td><code>POST /{PHONE_NUMBER_ID}/messages</code></td>
+            <td><code>POST /{WABA_ID}/subscribed_apps</code></td>
+          </tr>
+          <tr>
+            <td><strong>In your .env file</strong></td>
+            <td><code>PHONE_NUMBER_ID=...</code> (required)</td>
+            <td>Used in Postman calls, not usually in app env vars</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The hierarchy</h2>
+    <p>Think of it as a tree. Your Meta App contains one or more WABAs, and each WABA contains one or more phone numbers. Each level has its own ID:</p>
+
+    <div class="diagram">Your Meta Developer App
+    │
+    └── WhatsApp Business Account (WABA)
+            ID: 1684001316178308   ←── WABA ID
+            │
+            ├── Phone Number: +1 555 140 3562  (Test, provided by Meta)
+            │       ID: 987654321098765         ←── Phone Number ID
+            │
+            └── Phone Number: +263 77 555 0000  (Your permanent number)
+                    ID: 1043096775563494         ←── Phone Number ID
+</div>
+
+    <div class="callout callout--warning">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Watch out — two numbers, two IDs
+      </div>
+      <p>If you have both a test number and your own permanent number, each has its own Phone Number ID. Your <code>PHONE_NUMBER_ID</code> environment variable must point to the correct one — the permanent number you actually want to use in production, not the test number.</p>
+      <p style="margin-top:.5rem">Messages sent using the wrong Phone Number ID will go out from the wrong number, which can be very confusing during testing.</p>
+    </div>
+
+    <h2>Where to find each ID</h2>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Finding the Phone Number ID</h3>
+        <ol>
+          <li>Go to <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a> and open your app.</li>
+          <li>In the left sidebar, click <strong>WhatsApp → API Setup</strong>.</li>
+          <li>Under the <strong>"From"</strong> section, if you have multiple numbers use the dropdown to select the right one.</li>
+          <li>The <strong>Phone Number ID</strong> is shown directly below the selected phone number.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Finding the WABA ID</h3>
+        <p>There are two places to find it:</p>
+        <p><strong>Option A</strong> — In the Developer App:</p>
+        <ol>
+          <li>Same page: <strong>WhatsApp → API Setup</strong>.</li>
+          <li>The <strong>WhatsApp Business Account ID</strong> is shown at the top of the page, above the phone numbers section.</li>
+        </ol>
+        <p><strong>Option B</strong> — In Meta Business Suite:</p>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a>.</li>
+          <li>Click the gear icon (Settings) → <strong>Business Settings</strong>.</li>
+          <li>In the left menu, under <strong>"Accounts"</strong>, click <strong>"WhatsApp Accounts"</strong>.</li>
+          <li>The number listed next to each WABA name is the WABA ID.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2>Real-world example: send a text message</h2>
+    <p>This is the full API call to send a text message. Notice which ID goes where:</p>
+
+    <div class="code-block">
+      <div class="code-block__header">
+        <span class="code-lang">HTTP</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code>POST https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages
+Authorization: Bearer {ACCESS_TOKEN}
+Content-Type: application/json
+
+{
+  "messaging_product": "whatsapp",
+  "to": "263775550000",
+  "type": "text",
+  "text": { "body": "Hello from the API!" }
+}</code></pre>
+    </div>
+
+    <p>The <code>{PHONE_NUMBER_ID}</code> in the URL is the ID of <em>your</em> number (the sender). The <code>to</code> field is the recipient's phone number in international format without the <code>+</code> sign.</p>
+
+    <div class="callout callout--tip">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Save both IDs now
+      </div>
+      <p>Copy both your WABA ID and your Phone Number ID into a secure notes file right now. You'll need the WABA ID for the subscription call in Section 5, and the Phone Number ID in your app's <code>.env</code> file.</p>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/phone-numbers" target="_blank">Phone Numbers API Reference <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/business-management-api/whatsapp-business-accounts" target="_blank">WABA Management Reference <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./2-create-app.html" class="btn btn--ghost">← Creating a WhatsApp App</a>
+    <a href="./4-business-verification.html" class="btn btn--primary">Next: Business Verification →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

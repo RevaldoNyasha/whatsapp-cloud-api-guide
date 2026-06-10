@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 9 — Express Backend | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 10 of 12</span>
+  <h1>Simple Express Backend</h1>
+  <p class="page-subtitle">Here is a minimal but complete Express server that handles webhook verification, receives incoming messages, and sends replies. Everything you need to get the API talking to your code.</p>
+
+  <div class="card">
+
+    <h2>What your server needs to do</h2>
+    <ol>
+      <li><strong>Answer Meta's webhook verification</strong> — a one-time GET request Meta sends to confirm your server is real</li>
+      <li><strong>Receive incoming messages</strong> — a POST request Meta sends whenever a user messages your bot</li>
+      <li><strong>Send replies</strong> — an outgoing POST from your server to the WhatsApp API</li>
+    </ol>
+
+    <h2>Environment variables</h2>
+    <div class="code-block">
+      <div class="code-block__header">
+        <span class="code-lang">.env</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code>PORT=3000
+WHATSAPP_TOKEN=EAAVGz...        # From Section 7 — use System User Token for production
+PHONE_NUMBER_ID=1043096775563494 # From Section 3 — your permanent number's ID
+VERIFY_TOKEN=mySecretString     # Any string you choose — must match Meta webhook config</code></pre>
+    </div>
+
+    <h2>Complete index.js</h2>
+
+    <div class="code-block">
+      <div class="code-block__header">
+        <span class="code-lang">JavaScript (index.js)</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code>require('dotenv').config();
+const express = require('express');
+const axios   = require('axios');
+const app     = express();
+
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+
+// Webhook verification — Meta sends this once to confirm your server is reachable
+app.get('/webhook', (req, res) => {
+  const mode      = req.query['hub.mode'];
+  const token     = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
+    console.log('Webhook verified successfully');
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+// Receive incoming messages
+app.post('/webhook', (req, res) => {
+  // Respond 200 immediately — Meta requires a response within 5 seconds
+  res.sendStatus(200);
+
+  const body = req.body;
+  if (body.object !== 'whatsapp_business_account') return;
+
+  const entry         = body.entry?.[0];
+  const change        = entry?.changes?.[0];
+  const value         = change?.value;
+  const messages      = value?.messages;
+
+  if (!messages || messages.length === 0) return; // status update, not a message
+
+  const message       = messages[0];
+  const from          = message.from;           // sender's phone number
+  const phoneNumberId = value.metadata?.phone_number_id;
+
+  console.log(`Incoming message from ${from}:`, JSON.stringify(message));
+
+  // Route by message type
+  if (message.type === 'text') {
+    const text = message.text.body;
+    sendTextMessage(phoneNumberId, from, `You said: ${text}`);
+  } else if (message.type === 'interactive') {
+    handleInteractive(phoneNumberId, from, message.interactive);
+  }
+  // Add more type handlers as needed: 'image', 'document', 'location', etc.
+});
+
+async function sendTextMessage(phoneNumberId, to, text) {
+  try {
+    await axios.post(
+      `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`,
+      {
+        messaging_product: 'whatsapp',
+        to,
+        type: 'text',
+        text: { body: text }
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+  } catch (err) {
+    console.error('Send error:', err.response?.data || err.message);
+  }
+}
+
+function handleInteractive(phoneNumberId, from, interactive) {
+  if (interactive.type === 'button_reply') {
+    const buttonId    = interactive.button_reply.id;
+    const buttonTitle = interactive.button_reply.title;
+    sendTextMessage(phoneNumberId, from, `You clicked: ${buttonTitle} (id: ${buttonId})`);
+  } else if (interactive.type === 'list_reply') {
+    const listId = interactive.list_reply.id;
+    sendTextMessage(phoneNumberId, from, `You selected: ${listId}`);
+  }
+}
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+</code></pre>
+    </div>
+
+    <div class="callout callout--danger">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Always respond 200 before processing
+      </div>
+      <p>Meta requires your webhook to respond with HTTP 200 <strong>within 5 seconds</strong>. If your processing (database queries, external API calls) might take longer, respond with 200 first and process asynchronously afterward. If Meta doesn't get a 200 in time, it retries the delivery — which can cause duplicate message handling.</p>
+    </div>
+
+    <h2>Sending an interactive button message</h2>
+    <div class="code-block">
+      <div class="code-block__header">
+        <span class="code-lang">JavaScript</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code>await axios.post(
+  `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`,
+  {
+    messaging_product: 'whatsapp',
+    to: recipientNumber,
+    type: 'interactive',
+    interactive: {
+      type: 'button',
+      body: { text: 'What would you like to do?' },
+      action: {
+        buttons: [
+          { type: 'reply', reply: { id: 'option_yes', title: 'Yes' } },
+          { type: 'reply', reply: { id: 'option_no',  title: 'No'  } },
+          { type: 'reply', reply: { id: 'option_later', title: 'Later' } }
+        ]
+      }
+    }
+  },
+  {
+    headers: { Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}` }
+  }
+);</code></pre>
+    </div>
+
+    <h2>Minimum package.json</h2>
+    <div class="code-block">
+      <div class="code-block__header">
+        <span class="code-lang">JSON (package.json)</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code>{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "express": "^5.0.0"
+  }
+}</code></pre>
+    </div>
+
+    <h2>Setting up the webhook in Meta</h2>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Deploy your server</h3>
+        <p>Your server must be publicly accessible over HTTPS with a permanent URL. The easiest way is to connect your GitHub repository to a free hosting platform:</p>
+        <ul>
+          <li><strong><a href="https://render.com" target="_blank">Render</a></strong> — connect GitHub repo, select "Web Service", free tier. URL: <code>https://your-app.onrender.com</code></li>
+          <li><strong><a href="https://railway.app" target="_blank">Railway</a></strong> — connect GitHub repo, auto-deploy on every push, generous free tier</li>
+          <li><strong><a href="https://cloud.google.com/run" target="_blank">Google Cloud Run</a></strong> — deploy from GitHub or Docker, free when idle (scales to zero)</li>
+        </ul>
+        <p>All three support environment variables in their dashboard — set <code>VERIFY_TOKEN</code>, <code>WHATSAPP_TOKEN</code>, and <code>PHONE_NUMBER_ID</code> there, not in your code.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Configure webhook in Meta</h3>
+        <ol>
+          <li>Developer App → <strong>WhatsApp → Configuration → Webhook → Edit</strong></li>
+          <li>Set <strong>Callback URL</strong> to <code>https://your-server.com/webhook</code></li>
+          <li>Set <strong>Verify Token</strong> to the same string you put in your <code>VERIFY_TOKEN</code> env var</li>
+          <li>Click <strong>Verify and Save</strong> — Meta sends a GET to your webhook immediately</li>
+          <li>Your server should log "Webhook verified successfully" and Meta shows a green checkmark</li>
+          <li>Under <strong>Webhook fields</strong>, make sure <strong>messages</strong> is toggled to Subscribed</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Test it end-to-end</h3>
+        <ol>
+          <li>From one of your 5 registered test recipient numbers, send a WhatsApp message to your bot's number</li>
+          <li>Check your server logs — you should see the incoming payload</li>
+          <li>The bot should reply: "You said: [your message]"</li>
+        </ol>
+        <p>If this works, your entire integration is functioning correctly. You're ready for the final step.</p>
+      </div>
+    </div>
+
+    <div class="callout callout--tip">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Tip: deploy early, not last
+      </div>
+      <p>Don't wait until everything is working locally before deploying. Push to Render, Railway, or Cloud Run early — even with a basic echo server — so you have a stable HTTPS URL to register with Meta from the start. All three platforms redeploy automatically on every GitHub push, so your changes go live in under a minute.</p>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks" target="_blank">Webhook Documentation <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages" target="_blank">Messages API Reference <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages" target="_blank">Sending Messages Guide <span>developers.facebook.com</span></a>
+    <a href="https://render.com" target="_blank">Render — Free Node.js hosting, GitHub deploy <span>render.com</span></a>
+    <a href="https://railway.app" target="_blank">Railway — Free tier, auto-deploy from GitHub <span>railway.app</span></a>
+    <a href="https://cloud.google.com/run" target="_blank">Google Cloud Run — Docker or GitHub, scales to zero <span>cloud.google.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./8-pricing.html" class="btn btn--ghost">← Pricing</a>
+    <a href="./11-message-types.html" class="btn btn--primary">Next: Message Types →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

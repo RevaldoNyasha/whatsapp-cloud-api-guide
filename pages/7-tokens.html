@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 7 — Tokens &amp; Authentication | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 7 of 12</span>
+  <h1>Tokens &amp; Authentication</h1>
+  <p class="page-subtitle">Every API call requires an access token. There are two kinds. Using the wrong one is the single most common cause of a bot that works for a day and then mysteriously stops.</p>
+
+  <div class="card">
+
+    <h2>The two token types</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th></th><th>Temporary Token</th><th>System User Token</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Lifespan</strong></td><td>~24 hours</td><td>Never expires (until manually revoked)</td></tr>
+          <tr><td><strong>Where to get it</strong></td><td>Developer App → WhatsApp → API Setup → "Generate"</td><td>Meta Business Manager → System Users</td></tr>
+          <tr><td><strong>Good for</strong></td><td>Initial testing only</td><td>Production / anything running unattended</td></tr>
+          <tr><td><strong>Expiry symptom</strong></td><td>Bot receives messages but never replies; logs show <code>OAuthException code: 190</code></td><td>N/A — never expires</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--danger">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Token expired — what it looks like
+      </div>
+      <p>If your bot receives incoming messages (you can see the POST requests in your server logs) but <strong>never sends a reply</strong>, and your logs show something like:</p>
+      <div class="code-block" style="margin-top:.75rem">
+        <div class="code-block__header"><span class="code-lang">JSON</span><button class="copy-btn">Copy</button></div>
+        <pre><code>{
+  "error": {
+    "message": "Invalid OAuth access token.",
+    "type": "OAuthException",
+    "code": 190
+  }
+}</code></pre>
+      </div>
+      <p style="margin-top:.75rem">Your temporary token has expired. Fix: either regenerate a new temporary token (short-term) or set up a System User Token (the right solution).</p>
+    </div>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Getting a temporary token (quick start)</h3>
+        <ol>
+          <li>Go to <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a> → your app → <strong>WhatsApp → API Setup</strong></li>
+          <li>Under <strong>"Access Tokens"</strong>, click <strong>Generate</strong></li>
+          <li>Copy the token (starts with <code>EAA</code>)</li>
+          <li>Set it as your <code>WHATSAPP_TOKEN</code> environment variable</li>
+        </ol>
+        <p>This token expires in approximately 24 hours. Only use it for local development — never in a deployed server.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Create a System User (for production)</h3>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a></li>
+          <li>Click the gear icon → <strong>Business Settings</strong></li>
+          <li>In the left menu under <strong>"Users"</strong>, click <strong>System Users</strong></li>
+          <li>Click <strong>Add</strong></li>
+          <li>Give it a name (e.g. "WhatsApp Bot") and set the role to <strong>Admin</strong></li>
+          <li>Click <strong>Create System User</strong></li>
+        </ol>
+        <p>The System User is now created but has no permissions. The next two steps add them.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Add the System User to your app</h3>
+        <ol>
+          <li>Still in System Users, click your new user</li>
+          <li>Click <strong>Add Assets</strong></li>
+          <li>Under <strong>"Apps"</strong>, find and select your WhatsApp Developer App</li>
+          <li>Toggle on <strong>Manage app</strong></li>
+          <li>Click <strong>Save Changes</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Generate a permanent token</h3>
+        <ol>
+          <li>In System Users, click your System User</li>
+          <li>Click <strong>Generate New Token</strong></li>
+          <li>Select your WhatsApp app from the dropdown</li>
+          <li>Check these two permissions:
+            <ul>
+              <li><code>whatsapp_business_messaging</code></li>
+              <li><code>whatsapp_business_management</code></li>
+            </ul>
+          </li>
+          <li>Set the token expiry to <strong>Never</strong></li>
+          <li>Click <strong>Generate Token</strong></li>
+          <li>Copy the token immediately — Meta will not show it again</li>
+        </ol>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Set expiry to Never
+          </div>
+          <p>If you set an expiry date during generation, you defeat the purpose of using a System User. Make sure the expiry is set to <strong>Never</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Store the token safely</h3>
+        <p>Your token is a secret credential. Treat it like a password.</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">.env</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code># NEVER commit this file to Git
+WHATSAPP_TOKEN=EAAVGz...
+PHONE_NUMBER_ID=1043096775563494
+VERIFY_TOKEN=your_chosen_webhook_secret</code></pre>
+        </div>
+
+        <ul>
+          <li>Add <code>.env</code> to your <code>.gitignore</code> file</li>
+          <li>For deployed servers: use the platform's secrets/environment variables UI (Render, Cloud Run, Railway, Heroku all have one)</li>
+          <li>Never hardcode tokens directly in source code</li>
+        </ul>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Accidentally pushed to GitHub?
+          </div>
+          <p>If you accidentally commit and push a token to a public (or even private) GitHub repo, <strong>revoke it immediately</strong>: Business Settings → System Users → your user → revoke the token. Then generate a new one. GitHub scans public repositories for secrets and may notify Meta automatically — but don't wait for that, revoke it yourself right away.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/business-management-api/get-started" target="_blank">System User Token Guide <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/facebook-login/guides/access-tokens" target="_blank">Access Token Documentation <span>developers.facebook.com</span></a>
+    <a href="https://business.facebook.com/settings/system-users" target="_blank">System Users in Business Manager <span>business.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./6-display-name.html" class="btn btn--ghost">← Display Name Verification</a>
+    <a href="./8-pricing.html" class="btn btn--primary">Next: Pricing →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

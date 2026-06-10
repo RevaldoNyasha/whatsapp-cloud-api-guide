@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 10 — Going Live | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 12 of 12</span>
+  <h1>Going Live</h1>
+  <p class="page-subtitle">Your app starts in Development mode, where only 5 registered test recipients can interact with it. Switching to Live mode opens it to any WhatsApp user in the world. Here's how to do it safely.</p>
+
+  <div class="card">
+
+    <h2>Development mode vs Live mode</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th></th><th>Development Mode</th><th>Live Mode</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Who can message your bot</strong></td><td>Only your 5 registered test recipients</td><td>Any WhatsApp user</td></tr>
+          <tr><td><strong>Messages from other numbers</strong></td><td>Silently ignored — no webhook event</td><td>Forwarded to your webhook</td></tr>
+          <tr><td><strong>Display name required</strong></td><td>No</td><td>No — you can go live without it (cosmetic limitation only)</td></tr>
+          <tr><td><strong>Business verification required</strong></td><td>No</td><td>Strongly recommended</td></tr>
+          <tr><td><strong>App Review required</strong></td><td>No</td><td>May be required for some permissions</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Pre-flight checklist</h2>
+    <p>Before switching to Live mode, go through this checklist. Click each item to mark it complete.</p>
+
+    <ul class="checklist">
+      <li><div class="checklist-box"></div><span>Webhook URL is configured and Meta shows a green checkmark</span></li>
+      <li><div class="checklist-box"></div><span>The <strong>messages</strong> webhook field is subscribed (not just the webhook itself)</span></li>
+      <li><div class="checklist-box"></div><span><code>PHONE_NUMBER_ID</code> env variable points to your permanent number, not the test number</span></li>
+      <li><div class="checklist-box"></div><span><code>WHATSAPP_TOKEN</code> is a System User Token (never expires) — not the 24-hour temporary token</span></li>
+      <li><div class="checklist-box"></div><span>Display name submitted (approval is <em>not</em> required to go Live — see Section 6)</span></li>
+      <li><div class="checklist-box"></div><span>Business portfolio verified in Meta Business Suite</span></li>
+      <li><div class="checklist-box"></div><span>WABA subscribed to your app (<code>POST /{WABA_ID}/subscribed_apps</code> returned <code>{ "success": true }</code>)</span></li>
+      <li><div class="checklist-box"></div><span>End-to-end test passed: sent a message from a test number, bot replied correctly</span></li>
+      <li><div class="checklist-box"></div><span>Server responds HTTP 200 within 5 seconds for all webhook payloads</span></li>
+      <li><div class="checklist-box"></div><span><code>.env</code> file is in <code>.gitignore</code> and token is not exposed in source code</span></li>
+    </ul>
+
+    <div class="step" style="margin-top:2rem">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Switch the app mode</h3>
+        <ol>
+          <li>Go to <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a> and open your app</li>
+          <li>At the top of any page in your app dashboard, find the <strong>App Mode</strong> toggle — it currently shows <strong>Development</strong></li>
+          <li>Click it to switch to <strong>Live</strong></li>
+          <li>A confirmation dialog appears — confirm</li>
+        </ol>
+        <p>Your app is now live. Any WhatsApp user who messages your registered number will have their message forwarded to your webhook.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>App Review (if prompted)</h3>
+        <p>After switching to Live, Meta may prompt you to submit an <strong>App Review</strong> for the <code>whatsapp_business_messaging</code> permission.</p>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            App Review is straightforward for basic messaging
+          </div>
+          <p>For a standard bot that sends and receives messages for your business users, App Review is simple. Describe what your app does plainly ("A chatbot that allows customers to contact our support team via WhatsApp"). Approval typically takes a few business days. You don't need a screencast for basic messaging permissions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>One thing to skip: Tech Provider / BSP</h3>
+        <p>Somewhere in the Meta dashboard you may see a prompt to <strong>"Become a Tech Provider"</strong> or <strong>"Business Solution Provider (BSP)"</strong>.</p>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Skip the Tech Provider option
+          </div>
+          <p>A BSP/Tech Provider is only for companies that build WhatsApp solutions <em>on behalf of other businesses</em> — agencies, resellers, platform builders. If you're building your own bot for your own business, you do <strong>not</strong> need this. Opting in adds significant compliance requirements and a lengthy onboarding process for no benefit in your case.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Verify end-to-end in Live mode</h3>
+        <ol>
+          <li>Have a number that was <strong>not</strong> in your 5 test recipients send a message to your bot</li>
+          <li>Check your server logs — you should see the incoming payload with the real number in the <code>from</code> field</li>
+          <li>Your bot should reply correctly</li>
+        </ol>
+        <p>If this works, you're done. Your WhatsApp integration is live and open to the public.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Top 5 things that break after going live</h2>
+
+  <div class="card">
+    <div class="callout callout--danger" style="margin-top:0">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Common post-launch problems and fixes
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>#</th><th>Symptom</th><th>Root cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Bot receives messages but never replies</td>
+            <td>Access token expired (<code>OAuthException 190</code>)</td>
+            <td>Switch to System User Token (Section 7)</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Messages from permanent number never arrive at webhook</td>
+            <td>WABA not subscribed to the app</td>
+            <td>Run <code>POST /{WABA_ID}/subscribed_apps</code> again</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Bot replies but from the test number, not the real number</td>
+            <td>Wrong <code>PHONE_NUMBER_ID</code> in env vars</td>
+            <td>Update <code>PHONE_NUMBER_ID</code> to your permanent number's ID</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>No POST requests reach the server at all</td>
+            <td><strong>messages</strong> webhook field was unsubscribed</td>
+            <td>App → WhatsApp → Configuration → re-subscribe <strong>messages</strong> field</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Messages from real users silently ignored</td>
+            <td>App mode reverted to Development</td>
+            <td>Check the App Mode toggle at the top of the developer dashboard</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>Final reference — all the URLs you'll need</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/apps" target="_blank">Developer App Dashboard <span>developers.facebook.com/apps</span></a>
+    <a href="https://business.facebook.com" target="_blank">Meta Business Suite <span>business.facebook.com</span></a>
+    <a href="https://business.facebook.com/settings/system-users" target="_blank">System Users <span>business.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank">Pricing (per-country rates) <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages" target="_blank">Messages API Reference <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks" target="_blank">Webhooks Documentation <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/graph-api/changelog" target="_blank">Graph API Changelog <span>developers.facebook.com</span></a>
+    <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection <span>postman.com/meta</span></a>
+  </div>
+
+  <div class="callout callout--success">
+    <div class="callout-title">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+      You made it
+    </div>
+    <p>You've completed the full WhatsApp Cloud API setup. From developer account registration to a live, production-ready bot. Good luck with your project.</p>
+  </div>
+
+  <div class="page-nav">
+    <a href="./11-message-types.html" class="btn btn--ghost">← Message Types</a>
+    <a href="../index.html" class="btn btn--primary">← Back to Overview</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 5 — Phone Number Registration | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 5 of 12</span>
+  <h1>Phone Number Registration</h1>
+  <p class="page-subtitle">Meta provides a free test number for development. When you're ready for production, you'll register your own number. This section covers both, plus how to set up Postman with the official Meta collection.</p>
+
+  <div class="card">
+
+    <h2>Test number vs your own number</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th></th><th>Test Number</th><th>Your Own Number</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Provided by</strong></td><td>Meta (automatic)</td><td>You</td></tr>
+          <tr><td><strong>Cost</strong></td><td>Free</td><td>Your existing number</td></tr>
+          <tr><td><strong>Recipient limit</strong></td><td>5 registered numbers only</td><td>Unlimited (post-verification)</td></tr>
+          <tr><td><strong>Requires verification</strong></td><td>No</td><td>Yes (for full production use)</td></tr>
+          <tr><td><strong>Best for</strong></td><td>Development and testing</td><td>Production</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Using the test number</h3>
+        <p>In <strong>WhatsApp → API Setup</strong>, Meta provides a test phone number (usually a US +1 number). It's ready to use immediately — no registration needed.</p>
+        <p>To add recipients your test number can message:</p>
+        <ol>
+          <li>In API Setup, under the <strong>"To"</strong> section, click <strong>"Manage phone number list"</strong></li>
+          <li>Click <strong>Add phone number</strong></li>
+          <li>Enter the number and verify it via WhatsApp OTP</li>
+          <li>Repeat for up to 5 numbers</li>
+        </ol>
+        <p>Once added, you can send messages to those numbers using the API.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Set up Postman with Meta's official collection</h3>
+        <p>Postman is the best tool for making the API calls needed to register your number and subscribe your WABA. Meta maintains an official Postman workspace with all their API calls pre-built.</p>
+
+        <ol>
+          <li>Go to <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">postman.com/meta</a></li>
+          <li>Find the <strong>WhatsApp Business Platform</strong> collection</li>
+          <li>Click <strong>Fork</strong> (top right of the collection) — this copies it to your own Postman account</li>
+          <li>In your fork, click on the collection name and go to the <strong>Variables</strong> tab</li>
+          <li>Set these collection variables:</li>
+        </ol>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Variable</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td><code>access_token</code></td><td>Your temporary or permanent token (see Section 7)</td></tr>
+              <tr><td><code>phone-number-id</code></td><td>Your Phone Number ID from API Setup</td></tr>
+              <tr><td><code>business-account-id</code></td><td>Your WABA ID from API Setup</td></tr>
+              <tr><td><code>version</code></td><td><code>v22.0</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Always fork, never just open
+          </div>
+          <p>A fork gives you your own copy where you can save variable values and response history. Opening the collection directly means your changes aren't saved between sessions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Phone number rules — what is and isn't allowed</h3>
+        <p>Not every phone number can be used with WhatsApp Cloud API. Before you try to register, check your number against these requirements:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Rule</th><th>Detail</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Must be able to receive SMS or voice calls</strong></td>
+                <td>Meta sends an OTP to verify the number. It must be reachable via SMS or automated voice call at the time of registration.</td>
+              </tr>
+              <tr>
+                <td><strong>Cannot be currently active in any WhatsApp app</strong></td>
+                <td>If the number is registered in WhatsApp (personal or WhatsApp Business App), you must migrate it out first. A number cannot exist in two WhatsApp systems at the same time.</td>
+              </tr>
+              <tr>
+                <td><strong>Cannot be a short code</strong></td>
+                <td>Short codes (e.g. 5-digit numbers) are not supported. You need a standard local or international number.</td>
+              </tr>
+              <tr>
+                <td><strong>Cannot be a toll-free number in all regions</strong></td>
+                <td>Toll-free numbers are not supported in all countries. Check the Meta docs for your country.</td>
+              </tr>
+              <tr>
+                <td><strong>Must be a number you own and control</strong></td>
+                <td>You will need to receive an OTP on it during setup, and you'll be responsible for the number going forward.</td>
+              </tr>
+              <tr>
+                <td><strong>Landlines are supported</strong></td>
+                <td>Landlines can be used if they can receive an automated voice call for the OTP. Select "Call me" instead of SMS during verification.</td>
+              </tr>
+              <tr>
+                <td><strong>The number's country must be supported</strong></td>
+                <td>Most countries are supported but check Meta's country list for any restrictions in your region.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Number already active in WhatsApp? Migration required
+          </div>
+          <p>If the number is currently active in the consumer WhatsApp app or the WhatsApp Business App, you must <strong>delete the WhatsApp account</strong> on that app before Meta will allow the number to be added to the Cloud API. This process deletes all message history and backup data on that device. There's no way around it — one number, one system.</p>
+          <p style="margin-top:.5rem">To delete: open WhatsApp → Settings → Account → Delete my account. After deletion, wait a few minutes before trying to add the number in Meta Business Suite.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Add your number in Meta Business Suite</h3>
+        <p>Once you've confirmed the number is eligible:</p>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a> → Settings → WhatsApp Accounts</li>
+          <li>Click the WABA you want to use</li>
+          <li>Under <strong>Phone numbers</strong>, click <strong>Add phone number</strong></li>
+          <li>Enter your number in international format (e.g. <code>+263775550000</code>)</li>
+          <li>Choose verification method: <strong>Text message</strong> or <strong>Voice call</strong></li>
+          <li>Enter the 6-digit OTP you receive</li>
+          <li>Your number now appears in the list with its own Phone Number ID — copy it</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Register the number via Postman (the API call)</h3>
+        <p>Adding the number in Business Suite is only half the process. You must also register it via the API to activate it for Cloud API messaging. This is where Postman comes in.</p>
+
+        <p><strong>Step-by-step in Postman:</strong></p>
+        <ol>
+          <li>Open your forked Meta Postman collection</li>
+          <li>In the collection's <strong>Variables</strong> tab, make sure <code>phone-number-id</code> is set to your new number's Phone Number ID (not the test number's ID)</li>
+          <li>Also make sure <code>access_token</code> is current and valid</li>
+          <li>Find the request named <strong>"Register Phone Number"</strong> in the collection (under the Phone Numbers folder)</li>
+          <li>If you can't find it, create a new POST request manually:</li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">HTTP</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>POST https://graph.facebook.com/v22.0/{{phone-number-id}}/register
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "messaging_product": "whatsapp",
+  "pin": "123456"
+}</code></pre>
+        </div>
+
+        <p>The <code>pin</code> is a 6-digit number <strong>you choose</strong>. This becomes the two-step verification PIN for your number. Write it down — you'll need it if you ever need to re-register or migrate the number.</p>
+
+        <p><strong>Expected success response:</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">JSON</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>{ "success": true }</code></pre>
+        </div>
+
+        <p><strong>Common error responses and what they mean:</strong></p>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><code>code: 190</code></td>
+                <td>Access token is expired or invalid</td>
+                <td>Generate a new token (Section 7)</td>
+              </tr>
+              <tr>
+                <td><code>code: 100</code> — "Invalid parameter"</td>
+                <td>Wrong Phone Number ID in the URL, or the number wasn't added in Business Suite first</td>
+                <td>Double-check the Phone Number ID; confirm the number exists in Business Suite</td>
+              </tr>
+              <tr>
+                <td>"Phone number is already registered"</td>
+                <td>The number was previously registered (maybe through the WhatsApp Business App)</td>
+                <td>Deregister first, then re-register; or migrate the number out of the old system</td>
+              </tr>
+              <tr>
+                <td><code>code: 131031</code></td>
+                <td>Two-step verification is already enabled with a different PIN</td>
+                <td>You need to disable two-step verification first via the Business Suite settings, then re-register with your new PIN</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>Subscribe your WABA to your app (critical)</h3>
+        <p>This is the same call mentioned in Section 2, but it bears repeating because it's so commonly missed. After adding your permanent number, its WABA must be subscribed to your Developer App. Without this, messages to your permanent number will never reach your webhook — even though the dashboard may show everything as connected.</p>
+
+        <p>Run this directly in your terminal, or use Postman — whichever is faster when you're troubleshooting:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">curl (terminal)</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>curl -X POST "https://graph.facebook.com/v15.0/{WABA_ID}/subscribed_apps" -H "Authorization: Bearer {WHATSAPP_TOKEN}"</code></pre>
+        </div>
+
+        <p>Or in Postman as a POST request:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">HTTP</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>POST https://graph.facebook.com/v22.0/{{business-account-id}}/subscribed_apps
+Authorization: Bearer {{access_token}}</code></pre>
+        </div>
+
+        <p>No request body needed for either. Expected response:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">JSON</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>{ "success": true }</code></pre>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            curl is the fastest way to debug this
+          </div>
+          <p>If messages still aren't arriving after going through the Postman setup, paste the curl command straight into your terminal with your real WABA ID and token. You get an immediate response and can rule out any Postman variable misconfiguration as the cause.</p>
+        </div>
+
+        <p>Once you get <code>{ "success": true }</code> from both the register call and this call, your number is fully active and connected. Incoming messages will flow to your webhook.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">7</div>
+      <div class="step-content">
+        <h3>Verify the number is active — send a test message</h3>
+        <p>The final check: use Postman to send a message <em>from</em> your new number to one of your test recipients. Find <strong>"Send Message"</strong> in the Meta Postman collection, or use this request:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">HTTP</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>POST https://graph.facebook.com/v22.0/{{phone-number-id}}/messages
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "messaging_product": "whatsapp",
+  "to": "263775550000",
+  "type": "text",
+  "text": { "body": "Test message from my registered number" }
+}</code></pre>
+        </div>
+
+        <p>If the message arrives on the recipient's WhatsApp, your number is fully registered and working. If you get an error, the table above will help diagnose it.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Official Meta Postman Workspace <span>postman.com/meta</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started" target="_blank">WhatsApp Cloud API Getting Started <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/phone-numbers" target="_blank">Phone Number Management <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/registration" target="_blank">Registration API Reference <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./4-business-verification.html" class="btn btn--ghost">← Business Verification</a>
+    <a href="./6-display-name.html" class="btn btn--primary">Next: Display Name Verification →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

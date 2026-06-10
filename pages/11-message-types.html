@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 11 — Message Types | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 11 of 12</span>
+  <h1>Message Types</h1>
+  <p class="page-subtitle">The WhatsApp Cloud API supports several distinct message types — each with its own payload structure, character limits, and rules about when you can use it. This page covers all of them.</p>
+
+  <div class="card">
+
+    <h2>Overview — when can you send each type?</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Message Type</th><th>Requires template?</th><th>When allowed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Text</td><td>No</td><td>Within 24h customer service window</td></tr>
+          <tr><td>Media (image, video, document, audio)</td><td>No</td><td>Within 24h customer service window</td></tr>
+          <tr><td>Interactive — Reply Buttons</td><td>No</td><td>Within 24h customer service window</td></tr>
+          <tr><td>Interactive — List</td><td>No</td><td>Within 24h customer service window</td></tr>
+          <tr><td>Template (marketing / utility)</td><td>Yes — pre-approved</td><td>Any time, including to start a conversation</td></tr>
+          <tr><td>Authentication Template (OTP)</td><td>Yes — auto-approved</td><td>Any time</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--warning">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        24-hour window rule
+      </div>
+      <p>Once a user messages you, you have a 24-hour window to reply with any message type — no template needed. After that window closes, you can only contact them again using a pre-approved template. This is why templates matter for notifications and re-engagement.</p>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>1. Text messages</h2>
+    <p>The simplest type. Plain text, no template required, works within the 24-hour window.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Field</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td>Body text</td><td>Max 4096 characters</td></tr>
+          <tr><td>Preview URL</td><td>Optional — set <code>"preview_url": true</code> to generate a link preview</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "text",
+  "text": {
+    "body": "Hello! How can I help you today?",
+    "preview_url": false
+  }
+}</code></pre>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>2. Media messages</h2>
+    <p>Send images, videos, documents, audio, or stickers. You can reference media by URL or by a Media ID (after uploading via the Media API).</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Type</th><th>Accepted formats</th><th>Max size</th><th>Caption allowed?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>image</strong></td><td>JPEG, PNG</td><td>5 MB</td><td>Yes (max 1024 chars)</td></tr>
+          <tr><td><strong>video</strong></td><td>MP4, 3GPP (H.264 video, AAC audio)</td><td>16 MB</td><td>Yes (max 1024 chars)</td></tr>
+          <tr><td><strong>document</strong></td><td>PDF, DOCX, XLSX, PPTX, and others</td><td>100 MB</td><td>Yes (used as filename)</td></tr>
+          <tr><td><strong>audio</strong></td><td>AAC, MP4, MPEG, AMR, OGG</td><td>16 MB</td><td>No</td></tr>
+          <tr><td><strong>sticker</strong></td><td>WebP</td><td>500 KB (static) / 500 KB (animated)</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (image with caption)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "image",
+  "image": {
+    "link": "https://example.com/photo.jpg",
+    "caption": "Here is your receipt."
+  }
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (document)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "document",
+  "document": {
+    "link": "https://example.com/invoice.pdf",
+    "caption": "Invoice_2024_001.pdf"
+  }
+}</code></pre>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>3. Interactive — Reply Buttons</h2>
+    <p>Buttons appear as tappable options below your message. The user taps one and it sends their selection back to your webhook as an <code>interactive</code> message.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Component</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Number of buttons</strong></td><td>Max <strong>3</strong></td></tr>
+          <tr><td>Button title (label text)</td><td>Max <strong>20 characters</strong></td></tr>
+          <tr><td>Button ID (your identifier for the tap)</td><td>Max 256 characters</td></tr>
+          <tr><td>Body text</td><td>Max 1024 characters</td></tr>
+          <tr><td>Header (optional)</td><td>Text (max 60 chars), or image, video, document</td></tr>
+          <tr><td>Footer (optional)</td><td>Max 60 characters</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--tip">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Use the ID, not the title, in your logic
+      </div>
+      <p>When a user taps a button, your webhook receives <code>interactive.button_reply.id</code> and <code>interactive.button_reply.title</code>. Always check the <code>id</code> in your code — never the title. Titles can change; IDs are what you control and what your logic should key off.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (send buttons)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "interactive",
+  "interactive": {
+    "type": "button",
+    "header": {
+      "type": "text",
+      "text": "Your order is ready"
+    },
+    "body": {
+      "text": "Order #1042 is packed and waiting. What would you like to do?"
+    },
+    "footer": {
+      "text": "Reply within 24 hours"
+    },
+    "action": {
+      "buttons": [
+        {
+          "type": "reply",
+          "reply": { "id": "confirm_pickup", "title": "Confirm Pickup" }
+        },
+        {
+          "type": "reply",
+          "reply": { "id": "reschedule", "title": "Reschedule" }
+        },
+        {
+          "type": "reply",
+          "reply": { "id": "cancel_order", "title": "Cancel Order" }
+        }
+      ]
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (incoming button tap — from your webhook)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "type": "interactive",
+  "interactive": {
+    "type": "button_reply",
+    "button_reply": {
+      "id": "confirm_pickup",
+      "title": "Confirm Pickup"
+    }
+  }
+}</code></pre>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>4. Interactive — List Messages</h2>
+    <p>A list shows a scrollable menu when the user taps a button. Better than buttons when you have more than 3 options.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Component</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Total rows (items)</strong></td><td>Max <strong>10</strong> across all sections</td></tr>
+          <tr><td><strong>Number of sections</strong></td><td>Max <strong>10</strong></td></tr>
+          <tr><td>Row title</td><td>Max <strong>24 characters</strong></td></tr>
+          <tr><td>Row description (optional)</td><td>Max <strong>72 characters</strong></td></tr>
+          <tr><td>Row ID</td><td>Max 200 characters</td></tr>
+          <tr><td>Section title (optional)</td><td>Max 24 characters</td></tr>
+          <tr><td>Button label (the "tap to open list" text)</td><td>Max <strong>20 characters</strong></td></tr>
+          <tr><td>Body text</td><td>Max 1024 characters</td></tr>
+          <tr><td>Header (optional)</td><td>Text only, max 60 characters</td></tr>
+          <tr><td>Footer (optional)</td><td>Max 60 characters</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--warning">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        10 rows total, not 10 per section
+      </div>
+      <p>The limit is 10 rows spread across all sections combined — not 10 per section. If you have 2 sections with 5 rows each, that's your maximum. Plan accordingly when designing your menus.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (list message)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "interactive",
+  "interactive": {
+    "type": "list",
+    "header": {
+      "type": "text",
+      "text": "Our Services"
+    },
+    "body": {
+      "text": "Choose a service to get started. Tap the button below to see all options."
+    },
+    "footer": {
+      "text": "We reply within 1 hour"
+    },
+    "action": {
+      "button": "View Options",
+      "sections": [
+        {
+          "title": "Support",
+          "rows": [
+            {
+              "id": "track_order",
+              "title": "Track my order",
+              "description": "Get real-time updates on your delivery"
+            },
+            {
+              "id": "report_issue",
+              "title": "Report an issue",
+              "description": "Tell us what went wrong"
+            }
+          ]
+        },
+        {
+          "title": "Account",
+          "rows": [
+            {
+              "id": "update_details",
+              "title": "Update my details",
+              "description": "Change your name, email or address"
+            },
+            {
+              "id": "close_account",
+              "title": "Close account",
+              "description": "Permanently delete your account"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (incoming list selection — from your webhook)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "type": "interactive",
+  "interactive": {
+    "type": "list_reply",
+    "list_reply": {
+      "id": "track_order",
+      "title": "Track my order",
+      "description": "Get real-time updates on your delivery"
+    }
+  }
+}</code></pre>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>5. Message Templates (Marketing &amp; Utility)</h2>
+    <p>Templates are pre-written messages approved by Meta. You use them to start conversations or send notifications outside the 24-hour window. They are not free-form — the structure is fixed and must match exactly what Meta approved.</p>
+
+    <h3>Template components</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Component</th><th>Required?</th><th>Limits</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Header</strong></td><td>Optional</td><td>Text (max 60 chars) or media (image, video, document)</td></tr>
+          <tr><td><strong>Body</strong></td><td>Required</td><td>Max 1024 characters; variables allowed: <code>{{1}}</code>, <code>{{2}}</code>, etc.</td></tr>
+          <tr><td><strong>Footer</strong></td><td>Optional</td><td>Max 60 characters; no variables</td></tr>
+          <tr><td><strong>Buttons</strong></td><td>Optional</td><td>See button types below</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Button types in templates</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Button type</th><th>Max count</th><th>What it does</th><th>Char limit</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Quick Reply</strong></td>
+            <td>Max <strong>3</strong></td>
+            <td>User taps → sends a reply back to your webhook; you handle it like a button_reply</td>
+            <td>25 chars per button</td>
+          </tr>
+          <tr>
+            <td><strong>Call to Action — URL</strong></td>
+            <td>Max <strong>2</strong></td>
+            <td>Opens a URL in the browser; can include a dynamic variable in the URL path</td>
+            <td>20 chars label / 2000 chars URL</td>
+          </tr>
+          <tr>
+            <td><strong>Call to Action — Phone</strong></td>
+            <td>Max <strong>1</strong></td>
+            <td>Opens a dial prompt with a preset phone number</td>
+            <td>20 chars label</td>
+          </tr>
+          <tr>
+            <td><strong>Copy Code</strong></td>
+            <td>Max <strong>1</strong></td>
+            <td>Copies a code (OTP/coupon) to clipboard when tapped — used in Authentication templates</td>
+            <td>N/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--warning">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Quick Reply and Call to Action cannot be mixed
+      </div>
+      <p>A template can have up to 3 Quick Reply buttons <em>or</em> up to 2 Call to Action buttons — but not both types in the same template. Choose one category of button per template.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (sending a template with variables)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "template",
+  "template": {
+    "name": "order_confirmation",
+    "language": { "code": "en_US" },
+    "components": [
+      {
+        "type": "header",
+        "parameters": [
+          { "type": "image", "image": { "link": "https://example.com/logo.png" } }
+        ]
+      },
+      {
+        "type": "body",
+        "parameters": [
+          { "type": "text", "text": "John" },
+          { "type": "text", "text": "ORD-9921" },
+          { "type": "text", "text": "2 business days" }
+        ]
+      },
+      {
+        "type": "button",
+        "sub_type": "quick_reply",
+        "index": "0",
+        "parameters": [{ "type": "payload", "payload": "track_ORD-9921" }]
+      }
+    ]
+  }
+}</code></pre>
+    </div>
+
+    <p>The body of this template was approved as: <em>"Hi {{1}}, your order {{2}} will arrive in {{3}}."</em>. The three parameters fill in <code>{{1}}</code>, <code>{{2}}</code>, <code>{{3}}</code> in order.</p>
+
+    <h3>Creating a template</h3>
+    <ol>
+      <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a> → your WABA → <strong>Message Templates</strong></li>
+      <li>Click <strong>Create Template</strong></li>
+      <li>Choose category: <strong>Marketing</strong> (promotions), <strong>Utility</strong> (transactional — order updates, receipts), or <strong>Authentication</strong> (OTP)</li>
+      <li>Write the body, add optional header/footer/buttons</li>
+      <li>Submit for review — Utility and Authentication templates are usually approved within minutes; Marketing can take longer</li>
+    </ol>
+
+  </div>
+
+  <div class="card">
+
+    <h2>6. Authentication Templates (OTP / password prompt)</h2>
+    <p>Authentication is a special template category designed specifically for sending one-time passwords, verification codes, and login prompts. Meta auto-approves these far faster than marketing templates because the use case is clear and tightly scoped.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Feature</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Category</strong></td><td>Authentication</td></tr>
+          <tr><td><strong>Approval speed</strong></td><td>Usually auto-approved within minutes</td></tr>
+          <tr><td><strong>Body variable</strong></td><td>One variable <code>{{1}}</code> for the code itself</td></tr>
+          <tr><td><strong>Code expiry notice</strong></td><td>Optional — you can set an expiry time (e.g. "This code expires in 10 minutes")</td></tr>
+          <tr><td><strong>Button</strong></td><td>One <strong>Copy Code</strong> button — user taps it and the code is copied to their clipboard automatically</td></tr>
+          <tr><td><strong>Header / Footer</strong></td><td>Not allowed on Authentication templates</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (sending an OTP via Authentication template)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "messaging_product": "whatsapp",
+  "to": "263776001234",
+  "type": "template",
+  "template": {
+    "name": "otp_verification",
+    "language": { "code": "en_US" },
+    "components": [
+      {
+        "type": "body",
+        "parameters": [
+          { "type": "text", "text": "847291" }
+        ]
+      },
+      {
+        "type": "button",
+        "sub_type": "url",
+        "index": "0",
+        "parameters": [
+          { "type": "text", "text": "847291" }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+    </div>
+
+    <p>The template body is typically something Meta generates based on your app name: <em>"{{1}} is your [App Name] verification code."</em> The Copy Code button lets the user copy <code>847291</code> directly to their clipboard without manually selecting it.</p>
+
+    <div class="callout callout--tip">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+        Authentication templates are free
+      </div>
+      <p>Authentication conversations are billed at a lower rate than marketing conversations in most regions, and in many countries they fall under the free tier. Check the <a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank">Meta pricing page</a> for your region.</p>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Quick reference — all limits at a glance</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Type</th><th>Key limit</th></tr></thead>
+        <tbody>
+          <tr><td>Text body</td><td>4096 characters</td></tr>
+          <tr><td>Reply buttons count</td><td><strong>3 max</strong></td></tr>
+          <tr><td>Reply button title</td><td><strong>20 characters</strong></td></tr>
+          <tr><td>List rows (total)</td><td><strong>10 max</strong></td></tr>
+          <tr><td>List sections</td><td>10 max</td></tr>
+          <tr><td>List row title</td><td><strong>24 characters</strong></td></tr>
+          <tr><td>List row description</td><td>72 characters</td></tr>
+          <tr><td>List button label</td><td>20 characters</td></tr>
+          <tr><td>Template body</td><td>1024 characters</td></tr>
+          <tr><td>Template quick reply buttons</td><td><strong>3 max</strong></td></tr>
+          <tr><td>Template quick reply title</td><td>25 characters</td></tr>
+          <tr><td>Template CTA buttons</td><td>2 max (URL and/or phone)</td></tr>
+          <tr><td>Template header text</td><td>60 characters</td></tr>
+          <tr><td>Template footer</td><td>60 characters</td></tr>
+          <tr><td>Image size</td><td>5 MB</td></tr>
+          <tr><td>Video size</td><td>16 MB</td></tr>
+          <tr><td>Document size</td><td>100 MB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages" target="_blank">Sending Messages Guide <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages" target="_blank">Messages API Reference <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines" target="_blank">Template Guidelines <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates" target="_blank">Sending Templates Guide <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank">WhatsApp Pricing by Region <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./10-express-backend.html" class="btn btn--ghost">← Express Backend</a>
+    <a href="./12-going-live.html" class="btn btn--primary">Next: Going Live →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

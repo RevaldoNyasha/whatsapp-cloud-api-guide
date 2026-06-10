@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 2 — Creating a WhatsApp App | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 2 of 12</span>
+  <h1>Creating a WhatsApp App</h1>
+  <p class="page-subtitle">Now that you have a developer account, you need to create a Meta App and add the WhatsApp product to it. There's one critical step at the end that almost everyone misses.</p>
+
+  <div class="card">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Create a new app</h3>
+        <p>From <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a>, click <strong>Create App</strong>. You will see a list of app types to choose from.</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>App Type</th><th>Use Case</th><th>WhatsApp?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Business</strong></td><td>Pages, WhatsApp, business APIs</td><td>✅ Yes — pick this one</td></tr>
+              <tr><td>Consumer</td><td>Facebook Login, individual user apps</td><td>❌ No</td></tr>
+              <tr><td>Gaming</td><td>Meta gaming platform</td><td>❌ No</td></tr>
+              <tr><td>None</td><td>Minimal app, no pre-configured products</td><td>❌ No</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Select Business type
+          </div>
+          <p>If you accidentally create a Consumer or None type app, you cannot add WhatsApp to it later. You will need to delete the app and create a new one. Save yourself the hassle — select <strong>Business</strong> from the start.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Name your app and link to a Business Portfolio</h3>
+        <p>Give your app a name — this is only visible to you and Meta reviewers, not to WhatsApp users. If you already have a Meta Business Portfolio set up, link it here. If not, you can skip this for now and link it later.</p>
+        <p>Click <strong>Create App</strong>. You will land on the app's product dashboard.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Add the WhatsApp product</h3>
+        <p>On your new app's dashboard, scroll down to the section labelled <strong>"Add products to your app"</strong>. Find <strong>WhatsApp</strong> and click <strong>Set Up</strong>.</p>
+        <p>You will be taken to the <strong>WhatsApp → API Setup</strong> section. This page is where you do most of the initial configuration.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>What you'll see in API Setup</h3>
+        <p>Meta automatically provisions a test WABA (WhatsApp Business Account) and a test phone number for you. The API Setup page shows:</p>
+        <div class="diagram">WhatsApp Business Account (Test)
+  ├── WABA ID: 123456789012345
+  └── Phone Number: +1 555 140 3562
+        Phone Number ID: 987654321098765
+
+Temporary Access Token: EAAVGz... [Generate]
+</div>
+        <p>You will use these IDs constantly. The next section explains the difference between them in detail. For now, note that both exist and that they are different numbers.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Subscribe to webhook fields</h3>
+        <p>In your app, go to <strong>WhatsApp → Configuration → Webhook</strong>. Look for the section labelled <strong>"Webhook fields"</strong> and make sure the <strong>messages</strong> field is toggled to <strong>Subscribed</strong>.</p>
+        <p>Without this subscription, Meta will receive your messages but will not forward them to your server. You will see nothing in your backend logs even though messages are being sent.</p>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Webhook callback URL
+          </div>
+          <p>You cannot complete webhook setup until your server is deployed and publicly accessible. Come back to this step after completing Section 9 (Express Backend). For now, just note that this is where you'll paste your server URL.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>The step everyone misses: subscribe your WABA to the app</h3>
+        <p>This is the single most commonly missed step in all of WhatsApp Cloud API setup. When you add WhatsApp to your app, Meta automatically connects the test WABA. But when you add your own permanent phone number under a <em>different</em> WABA, that WABA is <strong>not</strong> automatically connected to your app.</p>
+        <p>You must connect it manually using a direct API call. This is not clearly documented in Meta's quickstart guide.</p>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Symptom when this is missing
+          </div>
+          <p>Messages appear to send (no API errors), your webhook shows "Subscribed" in the dashboard, but <strong>no incoming messages ever arrive at your server</strong>. This is the sign that your WABA is not subscribed to your app.</p>
+        </div>
+
+        <p>Make this API call. You can use Postman (see Section 5) or run it directly in your terminal with curl:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">curl (terminal)</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>curl -X POST "https://graph.facebook.com/v15.0/{WABA_ID}/subscribed_apps" -H "Authorization: Bearer {WHATSAPP_TOKEN}"</code></pre>
+        </div>
+
+        <p>Or if you prefer the raw HTTP format for Postman:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">HTTP</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>POST https://graph.facebook.com/v22.0/{WABA_ID}/subscribed_apps
+Authorization: Bearer {YOUR_ACCESS_TOKEN}</code></pre>
+        </div>
+
+        <p>No request body is needed. The expected response is:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">JSON</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>{ "success": true }</code></pre>
+        </div>
+
+        <p>Once you receive <code>{ "success": true }</code>, your WABA is connected to your app and messages will flow to your webhook.</p>
+        <p>Replace <code>YOUR_WABA_ID</code> with your WhatsApp Business Account ID (explained in the next section) and <code>YOUR_ACCESS_TOKEN</code> with your current access token.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started" target="_blank">WhatsApp Cloud API Getting Started <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/business-management-api/waba-subscribed-apps" target="_blank">Subscribed Apps API Reference <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks" target="_blank">Webhook Documentation <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./1-meta-setup.html" class="btn btn--ghost">← Getting Started with Meta</a>
+    <a href="./3-ids-explained.html" class="btn btn--primary">Next: Understanding IDs →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

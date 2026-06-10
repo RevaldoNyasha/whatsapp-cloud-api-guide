@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 6 — Display Name Verification | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 6 of 12</span>
+  <h1>Display Name Verification</h1>
+  <p class="page-subtitle">The display name is the business name WhatsApp users see when you message them. Getting it approved is slow and gets rejected often — but you can go fully live and message real users without it. The difference is cosmetic only.</p>
+
+  <div class="card">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>What is a display name?</h3>
+        <p>The display name is the business name that appears to WhatsApp users when your number messages them. It shows in the chat header, the contact card, and their conversation list.</p>
+        <p>It is entirely separate from your registered phone number. You must submit it for approval and Meta reviews it manually.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>How to submit your display name</h3>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a> → Settings → WhatsApp Accounts</li>
+          <li>Click on your WABA</li>
+          <li>Under <strong>Phone numbers</strong>, click on your registered number</li>
+          <li>Click <strong>Edit display name</strong></li>
+          <li>Enter the name and submit for review</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>What Meta actually checks before approving</h3>
+        <p>Meta's reviewers don't just look at the name you submitted — they look at your <strong>entire online presence</strong> to verify that the name matches a real, legitimate business. When you submit a display name, Meta cross-references:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Signal Meta checks</th><th>What they're looking for</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Company website</strong></td>
+                <td>A live website where the business name appears prominently</td>
+                <td>Confirms the name belongs to a real operating business, not someone squatting on a name</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy Policy page</strong></td>
+                <td>A dedicated page explaining how user data is collected and used</td>
+                <td>Required for any business using WhatsApp to communicate with users — Meta enforces data protection obligations</td>
+              </tr>
+              <tr>
+                <td><strong>Terms of Service / Terms of Use</strong></td>
+                <td>Clear rules governing how users interact with your service</td>
+                <td>Shows Meta you are operating a structured business, not a personal or informal account</td>
+              </tr>
+              <tr>
+                <td><strong>Facebook Business Page</strong></td>
+                <td>A Page connected to the same Business Portfolio, with the same business name</td>
+                <td>Meta uses the Page name as a second reference point for the display name request</td>
+              </tr>
+              <tr>
+                <td><strong>Business Portfolio verification</strong></td>
+                <td>Official documents submitted in Section 4</td>
+                <td>The display name should match or closely reflect the verified business name</td>
+              </tr>
+              <tr>
+                <td><strong>Consistent branding</strong></td>
+                <td>The name on the website, the Facebook Page, the verification docs, and the display name request all match</td>
+                <td>Inconsistency across these sources is one of the most common silent rejection reasons</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Submitting before your web presence is ready is the most common mistake
+          </div>
+          <p>Developers often submit the display name immediately after setting up the app — before the business website is live, before policies are written, before a Facebook Page exists. Meta reviews it, finds nothing to corroborate the name, and rejects it. Set everything up first, then submit.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Your company website — what it needs</h3>
+        <p>Your website doesn't need to be elaborate, but it must exist and clearly identify your business. Meta reviewers will visit it.</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Page / element</th><th>What to include</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Homepage</strong></td>
+                <td>Business name (exactly as you're submitting for the display name), what you do, contact details</td>
+              </tr>
+              <tr>
+                <td><strong>About page</strong></td>
+                <td>Who the company is, when it was founded, what it offers — establishes legitimacy and age</td>
+              </tr>
+              <tr>
+                <td><strong>Contact page</strong></td>
+                <td>Email address, phone number, physical address if applicable — Meta checks that the business is reachable</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy Policy</strong></td>
+                <td>Dedicated page at a fixed URL (e.g. <code>/privacy</code> or <code>/privacy-policy</code>) — see Step 5</td>
+              </tr>
+              <tr>
+                <td><strong>Terms of Service</strong></td>
+                <td>Dedicated page at a fixed URL (e.g. <code>/terms</code>) — see Step 6</td>
+              </tr>
+              <tr>
+                <td><strong>Mention of WhatsApp / messaging</strong></td>
+                <td>If your app communicates via WhatsApp, your website should say so — "We send order updates via WhatsApp" etc.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Under construction pages fail
+          </div>
+          <p>A site showing a "coming soon" page or a domain that returns a 404 is treated the same as no website at all. Your site must be fully live and publicly accessible when you submit the display name. Meta does not wait for you to finish building it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Privacy Policy — why it matters and what it must cover</h3>
+        <p>A Privacy Policy is not optional. If your bot sends or receives messages containing any personal data (names, phone numbers, order details — anything), you are legally required to have one in most jurisdictions. Meta also explicitly requires it.</p>
+
+        <p>For a WhatsApp bot, your Privacy Policy needs to address:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Section</th><th>What to write</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>What data you collect</strong></td>
+                <td>Phone numbers, message content, names — be specific. Saying "we may collect information" is too vague and can trigger rejection.</td>
+              </tr>
+              <tr>
+                <td><strong>How you use the data</strong></td>
+                <td>e.g. "We use your phone number to send order confirmations and support replies via WhatsApp."</td>
+              </tr>
+              <tr>
+                <td><strong>How long you store it</strong></td>
+                <td>Retention period — "Messages are stored for 90 days" or "We do not store message content."</td>
+              </tr>
+              <tr>
+                <td><strong>Who you share it with</strong></td>
+                <td>Third parties, cloud providers, analytics tools. If you use Meta's WhatsApp API, say so — "We use Meta's WhatsApp Cloud API to deliver messages."</td>
+              </tr>
+              <tr>
+                <td><strong>How users can opt out</strong></td>
+                <td>How a user can stop receiving messages — "Reply STOP at any time" or a contact email to request deletion.</td>
+              </tr>
+              <tr>
+                <td><strong>Contact for data requests</strong></td>
+                <td>An email address where users can ask what data you hold about them and request deletion.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Keep the URL permanent
+          </div>
+          <p>Use a clean, permanent URL for your policy pages — <code>https://yoursite.com/privacy-policy</code> not something auto-generated like <code>/page?id=43</code>. When you submit the display name, some platforms ask for a privacy policy URL directly. A permanent, clean URL also looks more professional to reviewers.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>Terms of Service — what to include</h3>
+        <p>Your Terms of Service (also called Terms of Use or Terms &amp; Conditions) tell users what they're agreeing to when they interact with your service via WhatsApp. For Meta's review purposes it shows you are running a structured, professional operation.</p>
+
+        <p>Key sections to include:</p>
+        <ul>
+          <li><strong>Who the service is for</strong> — age restrictions, geographic limits if any</li>
+          <li><strong>What the service does</strong> — what your WhatsApp bot provides (order tracking, customer support, notifications, etc.)</li>
+          <li><strong>What you are not responsible for</strong> — service outages, message delivery delays (WhatsApp delivery is not guaranteed by you)</li>
+          <li><strong>How users consent to receive messages</strong> — important: WhatsApp requires that users opt in before you can send them business-initiated messages. Your Terms should explain this.</li>
+          <li><strong>How users can stop receiving messages</strong> — the opt-out mechanism</li>
+          <li><strong>How disputes are handled</strong> — governing law, jurisdiction</li>
+        </ul>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            WhatsApp opt-in is a Meta policy requirement
+          </div>
+          <p>Meta's policy requires that users explicitly opt in before you send them business-initiated messages. This isn't just a legal nicety — if Meta finds you are messaging users who didn't consent, your number can be flagged and your messaging quality rating downgraded, which reduces your daily message limits. Your Terms and your onboarding flow should make it clear that users agree to receive WhatsApp messages.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">7</div>
+      <div class="step-content">
+        <h3>Facebook Business Page — the often-missed piece</h3>
+        <p>Meta strongly recommends — and for display name approval, practically requires — a Facebook Business Page connected to the same Business Portfolio as your WhatsApp app.</p>
+
+        <p>Why it matters for display name approval:</p>
+        <ul>
+          <li>The Page name is used as a reference when Meta reviews your display name submission</li>
+          <li>An active Page with real posts demonstrates your business is operational, not newly created for the sole purpose of using WhatsApp</li>
+          <li>A Page connected to the same verified Business Portfolio creates a consistent, cross-verifiable record</li>
+        </ul>
+
+        <p>What your Facebook Page should have before you submit:</p>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Element</th><th>Why it helps</th></tr></thead>
+            <tbody>
+              <tr><td>Page name matching your display name submission</td><td>Direct name corroboration for Meta's reviewer</td></tr>
+              <tr><td>Profile photo and cover image</td><td>Signals an active, maintained presence</td></tr>
+              <tr><td>About section filled in completely</td><td>Business description, website URL, contact details all visible</td></tr>
+              <tr><td>Website URL linking to your live site</td><td>Creates a traceable connection between the Page and your web presence</td></tr>
+              <tr><td>At least a few posts</td><td>An empty Page looks abandoned — some content shows the business is real and active</td></tr>
+              <tr><td>Connected to your Meta Business Portfolio</td><td>Required — a standalone Page not linked to your Portfolio doesn't help with the review</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">8</div>
+      <div class="step-content">
+        <h3>Pre-submission checklist</h3>
+        <p>Before you submit your display name, make sure every item below is true. Submitting with gaps is the fastest way to get rejected and burn days waiting for review cycles.</p>
+
+        <ul class="checklist">
+          <li><span class="checklist-box"></span> Business website is live and publicly accessible</li>
+          <li><span class="checklist-box"></span> Business name on the website matches the display name you're submitting</li>
+          <li><span class="checklist-box"></span> Privacy Policy page exists at a permanent, clean URL</li>
+          <li><span class="checklist-box"></span> Privacy Policy mentions WhatsApp or messaging communication</li>
+          <li><span class="checklist-box"></span> Terms of Service page exists</li>
+          <li><span class="checklist-box"></span> Contact page exists with real contact information</li>
+          <li><span class="checklist-box"></span> Facebook Business Page exists with matching name</li>
+          <li><span class="checklist-box"></span> Facebook Page is connected to the same Meta Business Portfolio as the WhatsApp app</li>
+          <li><span class="checklist-box"></span> Business Portfolio verification (Section 4) is approved</li>
+          <li><span class="checklist-box"></span> Display name matches or closely reflects the verified legal business name</li>
+          <li><span class="checklist-box"></span> Display name doesn't contain restricted words (Bank, Official, WhatsApp, Meta, etc.)</li>
+          <li><span class="checklist-box"></span> Display name is specific — not generic words like "Tech Solutions" or "Support Team"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">9</div>
+      <div class="step-content">
+        <h3>The approval reality — expect rejections</h3>
+        <p>Even with everything above in place, display name approval is notoriously slow and often rejected multiple times. Here's what to expect:</p>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            What to expect
+          </div>
+          <ul>
+            <li>First submissions often come back rejected within 24–48 hours</li>
+            <li>Each resubmission can take 1–5 days</li>
+            <li>There is no appeal mechanism — you resubmit with a revised name or updated documentation</li>
+            <li>Meta's automated system does the initial review; rejection reasons are sometimes vague</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">10</div>
+      <div class="step-content">
+        <h3>Common rejection reasons and fixes</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Rejection reason</th><th>What to do</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Name is too generic</td>
+                <td>Add specificity — "Tech Solutions" → "Acme Tech Solutions"</td>
+              </tr>
+              <tr>
+                <td>Name doesn't match verified business name</td>
+                <td>Use the exact legal name from your verification documents</td>
+              </tr>
+              <tr>
+                <td>Name contains restricted words (e.g. "Bank", "Official")</td>
+                <td>Remove the restricted word or provide proof that it applies to you</td>
+              </tr>
+              <tr>
+                <td>Name appears to impersonate another brand</td>
+                <td>Use your own brand name — avoid anything that resembles a well-known company</td>
+              </tr>
+              <tr>
+                <td>Name violates Meta's display name policy</td>
+                <td>Review the policy link below and adjust accordingly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">11</div>
+      <div class="step-content">
+        <h3>Going live without an approved display name — it works</h3>
+        <p>This is the part Meta's documentation is deliberately vague about: <strong>you can go live and message real users even without an approved display name.</strong> The API is fully functional. You are not blocked from switching to Live mode. Real users can message your bot and receive replies normally.</p>
+
+        <div class="callout callout--success">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+            Confirmed working from real experience
+          </div>
+          <p>A live app with a pending or rejected display name still receives and sends messages to any WhatsApp user. You can fully deploy and operate your bot while waiting for display name approval.</p>
+        </div>
+
+        <h3>The only real limitation: how you appear to recipients</h3>
+        <p>Without an approved display name, recipients see your <strong>raw phone number</strong> (e.g. <code>+263 77 555 0000</code>) in the chat header and contact card instead of a business name. They may also see a generic "Business Account" label.</p>
+        <p>This is a <em>cosmetic</em> limitation only. Everything else works: messages are delivered, the bot replies, templates work, interactive messages work.</p>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            What changes without display name approval
+          </div>
+          <ul>
+            <li>Recipients see your phone number or "Business Account" instead of a business name</li>
+            <li>Lower trust appearance — users may be hesitant to engage without a recognisable name</li>
+            <li>WhatsApp may show an "unverified business" label on the chat</li>
+          </ul>
+        </div>
+
+        <h3>What is completely unaffected</h3>
+        <ul>
+          <li>Ability to go Live and message real (non-test) users ✅</li>
+          <li>All API calls — sending, receiving, templates, interactive messages ✅</li>
+          <li>Webhook delivery ✅</li>
+          <li>All message types ✅</li>
+        </ul>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Strategy: launch first, name later
+          </div>
+          <p>You don't have to wait for display name approval to go live. Deploy your bot, switch the app to Live mode, and start serving real users. Keep resubmitting the display name in the background. Once it's approved, the name updates automatically for all users — no downtime, no redeployment needed.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://www.facebook.com/business/help/338047025165344" target="_blank">Display Name Policy <span>facebook.com/business/help</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/guides/display-name" target="_blank">Display Name Guide <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/overview/getting-opt-in" target="_blank">WhatsApp Opt-In Requirements <span>developers.facebook.com</span></a>
+    <a href="https://www.whatsapp.com/legal/business-policy" target="_blank">WhatsApp Business Policy <span>whatsapp.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/overview/policy-enforcement" target="_blank">Meta Policy Enforcement <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./5-phone-numbers.html" class="btn btn--ghost">← Phone Number Registration</a>
+    <a href="./7-tokens.html" class="btn btn--primary">Next: Tokens &amp; Authentication →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

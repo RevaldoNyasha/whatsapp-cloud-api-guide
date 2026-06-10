@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 8 — Pricing | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 8 of 12</span>
+  <h1>Pricing</h1>
+  <p class="page-subtitle">WhatsApp Cloud API pricing is conversation-based, not per-message. Understanding this model before you build is essential for planning costs — especially if your users will be initiating conversations vs. you reaching out to them.</p>
+
+  <div class="card">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>How conversation pricing works</h3>
+        <p>Meta charges per <strong>conversation</strong>, not per message. A conversation is a <strong>24-hour window</strong> that opens when the first message is sent between you and a user.</p>
+        <p>Any number of messages exchanged within that 24-hour window counts as a single conversation. A new window — and a new charge — opens only when a message is sent after 24 hours of inactivity.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>The two conversation types</h3>
+        <p>How a conversation starts determines which category it falls into — and what you pay:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th></th><th>User-Initiated (Service)</th><th>Business-Initiated</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Triggered by</strong></td>
+                <td>The user messages you first</td>
+                <td>You send the first message to the user</td>
+              </tr>
+              <tr>
+                <td><strong>Requires a template?</strong></td>
+                <td>No — you can reply with free-form text</td>
+                <td>Yes — the opening message <em>must</em> be a pre-approved template</td>
+              </tr>
+              <tr>
+                <td><strong>Cost</strong></td>
+                <td>Lower rate (varies by country)</td>
+                <td>Higher rate (varies by country and category)</td>
+              </tr>
+              <tr>
+                <td><strong>Free tier</strong></td>
+                <td>1,000 conversations/month free</td>
+                <td>No free tier</td>
+              </tr>
+              <tr>
+                <td><strong>24h reply window</strong></td>
+                <td>You have 24 hours to reply freely after the user messages you</td>
+                <td>You open the window by sending a template</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            The free tier is per WABA, not per number
+          </div>
+          <p>The 1,000 free user-initiated conversations per month is shared across all phone numbers in one WABA. If you have multiple numbers under the same WABA, they share that allowance. The free tier resets on the 1st of each month.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Template messages — when you need them</h3>
+        <p>A <strong>template message</strong> is a pre-approved message format that you must use when <strong>you</strong> initiate a conversation (business-initiated). You cannot send a free-form text message to a user who hasn't messaged you first within 24 hours.</p>
+
+        <p>Templates have three categories:</p>
+        <ul>
+          <li><strong>Marketing</strong> — promotions, offers, announcements (highest cost)</li>
+          <li><strong>Utility</strong> — order confirmations, delivery updates, appointment reminders (moderate cost)</li>
+          <li><strong>Authentication</strong> — OTPs, verification codes (lowest cost)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Creating and approving a template</h3>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a> → Settings → WhatsApp Accounts → your WABA</li>
+          <li>Click <strong>Message Templates</strong> → <strong>Create Template</strong></li>
+          <li>Select a category (Marketing / Utility / Authentication)</li>
+          <li>Write the template — use <code>{{1}}</code>, <code>{{2}}</code> etc. for variable placeholders</li>
+          <li>Add a sample value for each variable (required by Meta for review)</li>
+          <li>Submit for approval</li>
+        </ol>
+        <p>Utility and Authentication templates typically approve within minutes to hours. Marketing templates can take hours to days.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Sending a template message — code example</h3>
+        <p>Once your template is approved, you send it like this:</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-lang">JavaScript</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code>const axios = require('axios');
+
+await axios.post(
+  `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`,
+  {
+    messaging_product: 'whatsapp',
+    to: '263775550000',       // recipient: international format, no + or spaces
+    type: 'template',
+    template: {
+      name: 'hello_world',    // your approved template name
+      language: { code: 'en_US' },
+      components: [
+        {
+          type: 'body',
+          parameters: [
+            { type: 'text', text: 'John' }   // replaces {{1}} in the template
+          ]
+        }
+      ]
+    }
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+      'Content-Type': 'application/json'
+    }
+  }
+);</code></pre>
+        </div>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Phone number format
+          </div>
+          <p>The <code>to</code> field must be in international format <strong>without</strong> the <code>+</code> sign or any spaces or dashes. For example: Zimbabwe (+263) 77 555 0000 becomes <code>263775550000</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>Actual pricing</h3>
+        <p>Rates vary significantly by the recipient's country. For example, conversations to users in Zimbabwe, South Africa, Kenya, and other African countries have different rates than conversations to users in the US or Germany.</p>
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Check the official pricing page
+          </div>
+          <p>Meta publishes a full per-country rate table. Always check the current rates before planning your pricing model — rates change and the table is the authoritative source.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank">Official WhatsApp Pricing Page (with per-country rates) <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/message-templates" target="_blank">Message Templates Documentation <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages" target="_blank">Sending Messages Guide <span>developers.facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./7-tokens.html" class="btn btn--ghost">← Tokens &amp; Authentication</a>
+    <a href="./9-webhooks.html" class="btn btn--primary">Next: Webhooks →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

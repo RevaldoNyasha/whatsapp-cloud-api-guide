@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 1 — Getting Started with Meta | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 1 of 12</span>
+  <h1>Getting Started with Meta</h1>
+  <p class="page-subtitle">Before you can make a single API call, you need a Meta Developer account. Two problems block most developers: using a Facebook account that looks like a bot, and an OTP that never arrives. Neither is documented by Meta.</p>
+
+  <div class="card">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Get or prepare a Facebook account — and why it must look real</h3>
+        <p>Everything in Meta's developer ecosystem — apps, business portfolios, WhatsApp Business Accounts — is tied to a personal Facebook profile. You need a real, active Facebook account to proceed.</p>
+        <p>The key word is <strong>active</strong>. Meta's automated systems continuously analyse accounts for signs of being bots or fake identities. If your account looks empty or newly created with no history, Meta <strong>will flag it</strong> — and this causes problems at multiple points: developer registration may be blocked, app creation may be restricted, or your app may be disabled with no clear explanation.</p>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Do not use a brand new or empty Facebook account
+          </div>
+          <p>A fresh account with no profile photo, no friends, no posts, and no activity looks exactly like a bot account to Meta's systems. Attempting developer registration from such an account will often result in:</p>
+          <ul style="margin-top:.5rem">
+            <li>Developer registration being silently blocked or stuck in review</li>
+            <li>OTP verification looping with no code ever arriving</li>
+            <li>The account being restricted mid-process without explanation</li>
+            <li>Apps created from the account being suspended shortly after creation</li>
+          </ul>
+        </div>
+
+        <h3>What makes a Facebook account look legitimate to Meta</h3>
+        <p>You don't need to be an active Facebook user — but the account needs enough signals that it's a real person's account. Here's what matters:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Signal</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Profile photo</strong></td>
+                <td>An account with no profile photo is a red flag. Add a real photo of yourself.</td>
+              </tr>
+              <tr>
+                <td><strong>Account age</strong></td>
+                <td>Accounts created less than a few weeks ago receive more scrutiny. If possible, use an account that has existed for months or years.</td>
+              </tr>
+              <tr>
+                <td><strong>Name matches real identity</strong></td>
+                <td>Meta cross-checks names against patterns. Use your real name, not a pseudonym or placeholder like "Test Account".</td>
+              </tr>
+              <tr>
+                <td><strong>Some friends or connections</strong></td>
+                <td>Even a handful of real Facebook friends significantly lowers the bot score. An account with zero connections looks like a throwaway.</td>
+              </tr>
+              <tr>
+                <td><strong>Confirmed email and phone</strong></td>
+                <td>The account should have a confirmed email address and a verified phone number. These are basic trust signals.</td>
+              </tr>
+              <tr>
+                <td><strong>Any past activity</strong></td>
+                <td>Even a few posts, likes, or page follows over time show the account has been used. A completely blank timeline is suspicious.</td>
+              </tr>
+              <tr>
+                <td><strong>Location/birthday set</strong></td>
+                <td>Having basic profile information filled in (location, date of birth) contributes to the account's authenticity score.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            What to do if you only have a new account
+          </div>
+          <p>If you have to use a new account, take a few days before attempting developer registration. Add a profile photo, fill in your name and basic info, add a couple of Facebook friends, and confirm your email address. Let the account "age" a little with normal-looking activity before going to <code>developers.facebook.com</code>. Rushing it with a zero-day account will almost always cause problems.</p>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Use your real personal account if you can
+          </div>
+          <p>Your personal Facebook account — the one you actually use — is the best option. It has history, friends, and activity that Meta already trusts. You don't expose any personal posts to your business apps; those are separate. If you have multiple Facebook accounts, choose the one with the most established history and stick with it for all developer work.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Go to developers.facebook.com</h3>
+        <p>Navigate to <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a> and click <strong>Get Started</strong> (or <strong>My Apps</strong> if you've been here before).</p>
+        <p>Follow the prompts to accept the Meta Platform Terms and Developer Policies. You will be asked to verify your phone number during this step.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>The verification SMS — and why it often doesn't arrive</h3>
+        <p>During developer registration, Meta sends an OTP (one-time password) via SMS. For many developers, this SMS simply never arrives. The cause is almost never your phone carrier — it is one of two things:</p>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Critical — OTP not arriving
+          </div>
+          <p><strong>Cause 1:</strong> You have more than one Facebook account logged into the same browser simultaneously. Meta's verification system gets confused when multiple sessions exist.</p>
+          <p style="margin-top:.6rem"><strong>Cause 2:</strong> Your Facebook account has too many trusted devices linked to it (old phones, tablets, other browsers). When an account has too many linked devices, Meta's SMS system sometimes refuses to send the OTP.</p>
+          <p style="margin-top:.6rem">This is a real bug that Meta has never properly documented.</p>
+        </div>
+
+        <h3>How to fix it — step by step</h3>
+        <ol>
+          <li>Log out of <strong>all</strong> Facebook accounts in your current browser.</li>
+          <li>In your browser settings, clear cookies and site data for <code>facebook.com</code> and <code>meta.com</code>.</li>
+          <li>Log back in with <strong>only the one account</strong> you intend to use for development.</li>
+          <li>In Facebook, go to <strong>Settings &amp; Privacy → Settings → Security and Login → "Where you're logged in"</strong>.</li>
+          <li>Remove any old, unrecognised, or unused devices from the list. Keep only your current device.</li>
+          <li>Return to <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a> and try the SMS verification again.</li>
+          <li>If the SMS still doesn't arrive: Meta offers a <strong>voice call</strong> option — use that instead. An automated call will read the code to you.</li>
+        </ol>
+
+        <div class="callout callout--success">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+            This works
+          </div>
+          <p>Removing extra devices and logging out of all but one Facebook account in the browser resolves the OTP issue in the vast majority of cases. Try a different browser entirely as a last resort.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Complete developer registration</h3>
+        <p>Once your phone number is verified, accept the developer platform policies. You will land on the <strong>My Apps</strong> dashboard at <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a>.</p>
+        <p>This is where all of your Meta apps live. Bookmark it — you will return here constantly during setup.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>A note on regions</h3>
+        <p>Some WhatsApp Cloud API features (particularly template message categories and certain dashboard options) are region-gated. If you're outside the US or EU, some options may appear later in the process or require additional steps. This is normal — proceed through the guide and the options will appear once your business is verified.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick links for this section -->
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/apps" target="_blank">My Apps Dashboard <span>developers.facebook.com/apps</span></a>
+    <a href="https://developers.facebook.com/docs/development" target="_blank">Developer Platform Documentation <span>developers.facebook.com</span></a>
+    <a href="https://www.facebook.com/settings?tab=security" target="_blank">Facebook Security Settings (Trusted Devices) <span>facebook.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="../index.html" class="btn btn--ghost">← Back to Overview</a>
+    <a href="./2-create-app.html" class="btn btn--primary">Next: Creating a WhatsApp App →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 9 — Webhooks | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 9 of 12</span>
+  <h1>Webhooks</h1>
+  <p class="page-subtitle">Before you write a single line of backend code, you need to understand what a webhook is and how Meta uses it to deliver messages to your server. This page covers the concept, the configuration, and every setting you need to get right.</p>
+
+  <div class="card">
+
+    <h2>What is a webhook?</h2>
+
+    <p>A webhook is a way for one server to notify another server that something happened — in real time, automatically, without polling.</p>
+
+    <p>Without webhooks, to check if a new WhatsApp message arrived, your server would have to keep asking Meta's API every few seconds: <em>"Any new messages? Any new messages?"</em> — that's called polling, and it's slow, wasteful, and impractical at scale.</p>
+
+    <p>With a webhook, Meta does the opposite. <strong>Meta calls your server</strong>. The moment a user sends a WhatsApp message to your number, Meta's system immediately fires an HTTP POST request to a URL you specify — your webhook URL. Your server receives that POST, reads the message data, and handles it.</p>
+
+    <div class="diagram">Without webhooks (polling):
+
+  Your Server  ──── "Any messages?" ────►  Meta API
+  Your Server  ◄─── "No"  ──────────────  Meta API
+  Your Server  ──── "Any messages?" ────►  Meta API   (every few seconds)
+  Your Server  ◄─── "No"  ──────────────  Meta API
+  Your Server  ──── "Any messages?" ────►  Meta API
+  Your Server  ◄─── "Yes, here it is" ──  Meta API
+
+With webhooks (event-driven):
+
+  User sends WhatsApp message
+        │
+        ▼
+  Meta API  ──── POST /webhook ──────────►  Your Server
+                 { message data }               │
+                                               ▼
+                                        Your server handles it instantly
+</div>
+
+    <p>This is why webhooks are fundamental to the WhatsApp Cloud API — there is no other way to receive incoming messages. You must expose a publicly accessible HTTPS endpoint and register it with Meta.</p>
+
+    <h2>The two requests Meta sends to your webhook</h2>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Request</th><th>When</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>GET</strong></td>
+            <td>Once, when you first register or update the webhook URL in Meta</td>
+            <td>Verification — Meta checks that the URL actually belongs to you and your server is reachable</td>
+          </tr>
+          <tr>
+            <td><strong>POST</strong></td>
+            <td>Every time a relevant event happens (message received, message status update, etc.)</td>
+            <td>Delivery — Meta sends you the event data</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>The three settings you configure</h2>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Callback URL</h3>
+        <p>This is the full HTTPS URL of your webhook endpoint — the address Meta will POST messages to. For example:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-lang">URL</span><button class="copy-btn">Copy</button></div>
+          <pre><code>https://your-server.com/webhook</code></pre>
+        </div>
+
+        <p><strong>Requirements:</strong></p>
+        <ul>
+          <li>Must be <strong>HTTPS</strong> — plain HTTP is not accepted</li>
+          <li>Must be <strong>publicly accessible</strong> — Meta's servers need to reach it from the internet, so <code>localhost</code> or <code>127.0.0.1</code> will never work</li>
+          <li>Must respond to a <strong>GET request</strong> during verification (covered below)</li>
+          <li>Must respond to <strong>POST requests</strong> with HTTP 200 within 5 seconds</li>
+        </ul>
+
+        <div class="callout callout--tip">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+            Where to host your server for free
+          </div>
+          <p>Your webhook server needs a permanent, public HTTPS URL. The easiest approach is to deploy it to a free hosting service — they all support connecting your GitHub repository so every push auto-deploys, or you can deploy via Docker.</p>
+          <ul>
+            <li><strong><a href="https://render.com" target="_blank">Render</a></strong> — connect your GitHub repo, choose "Web Service", free tier included. Your URL will be <code>https://your-app.onrender.com</code></li>
+            <li><strong><a href="https://railway.app" target="_blank">Railway</a></strong> — same GitHub-connect workflow, very fast deploys, generous free tier</li>
+            <li><strong><a href="https://cloud.google.com/run" target="_blank">Google Cloud Run</a></strong> — deploy from GitHub or a Docker container, scales to zero (free when idle), very reliable</li>
+          </ul>
+          <p>All three give you a stable HTTPS URL that never changes — unlike temporary tunnelling tools where you'd have to re-register the webhook every time you restart your machine.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Verify Token (the secret)</h3>
+        <p>The verify token is a string you make up yourself — any random text you choose. You set it in two places:</p>
+        <ol>
+          <li>In the Meta webhook configuration form (so Meta knows what to send)</li>
+          <li>In your server's environment variables as <code>VERIFY_TOKEN</code> (so your server knows what to expect)</li>
+        </ol>
+
+        <p>When you save the webhook URL in Meta, Meta immediately sends a GET request to your callback URL with three query parameters:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-lang">GET request from Meta</span><button class="copy-btn">Copy</button></div>
+          <pre><code>GET /webhook?hub.mode=subscribe&hub.verify_token=YOUR_VERIFY_TOKEN&hub.challenge=1158201444</code></pre>
+        </div>
+
+        <p>Your server must:</p>
+        <ol>
+          <li>Check that <code>hub.mode</code> equals <code>"subscribe"</code></li>
+          <li>Check that <code>hub.verify_token</code> matches your stored <code>VERIFY_TOKEN</code></li>
+          <li>If both match — respond with HTTP 200 and the value of <code>hub.challenge</code> as the body</li>
+          <li>If they don't match — respond with HTTP 403</li>
+        </ol>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            The verify token is not a security token
+          </div>
+          <p>The verify token is only used during the one-time URL verification handshake. It is not sent with every message — don't confuse it with your <code>WHATSAPP_TOKEN</code> (the access token). They are completely different things. Any string works as a verify token: <code>"mySecretString"</code>, <code>"abc123"</code>, etc.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Webhook fields — what to subscribe to</h3>
+        <p>After the URL is verified, Meta shows you a list of <strong>webhook fields</strong> — the categories of events you want to receive. You need to subscribe to the right ones or events won't arrive.</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Field</th><th>What it delivers</th><th>Subscribe?</th></tr></thead>
+            <tbody>
+              <tr><td><strong>messages</strong></td><td>Incoming messages from users, message status updates (sent, delivered, read), reactions</td><td>✅ Yes — required</td></tr>
+              <tr><td>message_template_status_update</td><td>Notifications when a template is approved or rejected</td><td>Optional</td></tr>
+              <tr><td>account_update</td><td>Changes to your WhatsApp account (phone number quality, restrictions)</td><td>Optional</td></tr>
+              <tr><td>business_capability_update</td><td>Updates to your messaging tier</td><td>Optional</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            messages field must be subscribed
+          </div>
+          <p>Even after your webhook URL is verified, if the <strong>messages</strong> field is not subscribed, Meta will <em>not</em> forward any incoming messages to your server. The webhook will show a green checkmark but nothing will arrive. Always check this field is toggled on after verification.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>How to configure the webhook in Meta — step by step</h2>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Deploy your server first</h3>
+        <p>Your server must be running and publicly accessible before you can complete webhook setup. Deploy to a free hosting platform — <a href="https://render.com" target="_blank">Render</a>, <a href="https://railway.app" target="_blank">Railway</a>, or <a href="https://cloud.google.com/run" target="_blank">Google Cloud Run</a> all work well and connect directly to a GitHub repo. Copy the HTTPS URL your platform assigns — you'll need it in the next step.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Open webhook configuration</h3>
+        <ol>
+          <li>Go to <a href="https://developers.facebook.com/apps" target="_blank">developers.facebook.com/apps</a> and open your app</li>
+          <li>In the left sidebar, click <strong>WhatsApp → Configuration</strong></li>
+          <li>Scroll to the <strong>Webhook</strong> section and click <strong>Edit</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Fill in the two fields</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Field</th><th>What to enter</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Callback URL</strong></td>
+                <td>Your server's full HTTPS URL + <code>/webhook</code></td>
+                <td><code>https://your-app.onrender.com/webhook</code></td>
+              </tr>
+              <tr>
+                <td><strong>Verify token</strong></td>
+                <td>Any string you choose — must match your <code>VERIFY_TOKEN</code> env var exactly</td>
+                <td><code>mySecretVerifyToken</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Click <strong>Verify and Save</strong>. Meta immediately sends the GET verification request to your server. If your server handles it correctly, you'll see a green checkmark and the configuration saves.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Subscribe to the messages field</h3>
+        <p>After verification, you'll see the <strong>Webhook fields</strong> section appear. Find <strong>messages</strong> in the list and toggle it to <strong>Subscribed</strong>. Click <strong>Done</strong>.</p>
+        <p>Your webhook is now fully configured. Every message sent to your WhatsApp number will be forwarded to your server as a POST request to <code>/webhook</code>.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>What a webhook POST payload looks like</h2>
+    <p>When a user sends "Hello" to your WhatsApp number, Meta sends your server a POST request with a JSON body like this:</p>
+
+    <div class="code-block">
+      <div class="code-block__header"><span class="code-lang">JSON (incoming message payload)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "YOUR_WABA_ID",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "263775550000",
+              "phone_number_id": "YOUR_PHONE_NUMBER_ID"
+            },
+            "contacts": [
+              {
+                "profile": { "name": "John Doe" },
+                "wa_id": "263776001234"
+              }
+            ],
+            "messages": [
+              {
+                "from": "263776001234",
+                "id": "wamid.abc123...",
+                "timestamp": "1700000000",
+                "type": "text",
+                "text": { "body": "Hello" }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}</code></pre>
+    </div>
+
+    <p>Key fields to extract from this payload:</p>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Path</th><th>Value</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td><code>entry[0].changes[0].value.messages[0].from</code></td><td><code>"263776001234"</code></td><td>Sender's phone number</td></tr>
+          <tr><td><code>entry[0].changes[0].value.messages[0].text.body</code></td><td><code>"Hello"</code></td><td>The message text</td></tr>
+          <tr><td><code>entry[0].changes[0].value.messages[0].type</code></td><td><code>"text"</code></td><td>Message type (text, image, interactive, etc.)</td></tr>
+          <tr><td><code>entry[0].changes[0].value.metadata.phone_number_id</code></td><td>Your Phone Number ID</td><td>Which of your numbers received the message</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout--warning">
+      <div class="callout-title">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        Not every POST is a message
+      </div>
+      <p>Meta also sends POST requests to your webhook for message status updates (sent → delivered → read) and other events. These payloads look similar but have no <code>messages</code> array — they have a <code>statuses</code> array instead. Always check that <code>value.messages</code> exists before trying to parse it, or your server will crash on status updates.</p>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Common webhook problems and fixes</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Verification fails — Meta shows an error</td>
+            <td>Your server isn't running, URL is wrong, or the GET handler isn't returning the challenge correctly</td>
+            <td>Test the URL in a browser first — it should show something. Check your GET handler returns <code>hub.challenge</code> as plain text</td>
+          </tr>
+          <tr>
+            <td>Webhook verified but no messages arrive</td>
+            <td><strong>messages</strong> field not subscribed, or WABA not subscribed to the app</td>
+            <td>Check the webhook fields toggle; run the <code>subscribed_apps</code> curl command from Section 2</td>
+          </tr>
+          <tr>
+            <td>Duplicate messages delivered</td>
+            <td>Your server took more than 5 seconds to respond with 200, so Meta retried</td>
+            <td>Send <code>res.sendStatus(200)</code> immediately at the top of your POST handler, before any processing</td>
+          </tr>
+          <tr>
+            <td>Works in staging/dev but not after deploying to production</td>
+            <td>Webhook URL in Meta still points to the old server URL, or env vars weren't set on the new hosting platform</td>
+            <td>Re-register the webhook with the new server URL; set <code>VERIFY_TOKEN</code> and <code>WHATSAPP_TOKEN</code> in the platform's environment variable settings</td>
+          </tr>
+          <tr>
+            <td>Verification keeps failing after redeployment</td>
+            <td>The <code>VERIFY_TOKEN</code> env var in Meta doesn't match the one in your deployed server</td>
+            <td>They must be character-for-character identical — check for trailing spaces or mismatched casing</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks" target="_blank">WhatsApp Webhook Documentation <span>developers.facebook.com</span></a>
+    <a href="https://developers.facebook.com/docs/graph-api/webhooks" target="_blank">Meta Webhooks Overview <span>developers.facebook.com</span></a>
+    <a href="https://render.com" target="_blank">Render — Free Node.js hosting, GitHub deploy <span>render.com</span></a>
+    <a href="https://railway.app" target="_blank">Railway — Free tier, fast GitHub deploys <span>railway.app</span></a>
+    <a href="https://cloud.google.com/run" target="_blank">Google Cloud Run — Docker or GitHub, scales to zero <span>cloud.google.com</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./8-pricing.html" class="btn btn--ghost">← Pricing</a>
+    <a href="./10-express-backend.html" class="btn btn--primary">Next: Express Backend →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

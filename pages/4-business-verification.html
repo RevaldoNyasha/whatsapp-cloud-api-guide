@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 4 — Business Portfolio Verification | WhatsApp Cloud API Guide</title>
+  <link rel="icon" type="image/png" href="../images/whatsapp-icon.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="navbar-brand">
+      <img src="../images/whatsapp-icon.png" alt="" width="32" height="32" />
+      <span>WhatsApp Cloud API Guide</span>
+    </a>
+    <div class="navbar-progress" id="progressDots"></div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+<nav class="nav-drawer" id="navDrawer"></nav>
+
+<div class="page-wrapper">
+
+  <span class="page-badge">Step 4 of 12</span>
+  <h1>Business Portfolio Verification</h1>
+  <p class="page-subtitle">To use the WhatsApp Cloud API beyond basic testing, Meta requires you to verify your business portfolio. This unlocks higher message limits, display name approval, and the ability to message users outside your test recipient list.</p>
+
+  <div class="callout callout--tip">
+    <div class="callout-title">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+      You can skip this for now
+    </div>
+    <p>You do not need business verification to follow Sections 5 through 9. Those sections work with the test number in development mode. Come back here when you're ready to go to production.</p>
+  </div>
+
+  <div class="card">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>What is Meta Business Suite?</h3>
+        <p>Meta Business Suite (previously Facebook Business Manager) is the central hub for managing your business's presence across Facebook, Instagram, and WhatsApp. It's at <a href="https://business.facebook.com" target="_blank">business.facebook.com</a>.</p>
+        <p>Think of it as the "owner" layer above your developer apps. Your developer app is linked to a Business Portfolio inside Business Suite.</p>
+        <p>If you don't have a Business Portfolio yet:</p>
+        <ol>
+          <li>Go to <a href="https://business.facebook.com" target="_blank">business.facebook.com</a></li>
+          <li>Click <strong>Create a business portfolio</strong></li>
+          <li>Enter your business name, your name, and a business email address</li>
+        </ol>
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Business name must match your documents
+          </div>
+          <p>The business name you enter here must <strong>exactly</strong> match the name on your verification documents — including capitalisation, punctuation, and abbreviations (e.g. "Ltd" vs "Limited"). Even a small mismatch will cause rejection.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Navigate to business verification</h3>
+        <ol>
+          <li>In <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>, click the gear icon in the left sidebar → <strong>Business Settings</strong></li>
+          <li>In the left menu under <strong>"Business Info"</strong>, click <strong>Security Center</strong></li>
+          <li>Look for the <strong>"Business verification"</strong> section and click <strong>Start Verification</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>What Meta checks</h3>
+        <p>Meta's verification process confirms four things:</p>
+        <ul>
+          <li>Your business is legally registered (or is a recognised organisation)</li>
+          <li>The business name on your documents matches the name in Meta Business Suite</li>
+          <li>Your contact details (phone/email) are reachable</li>
+          <li>You have authority to represent the business</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Choose a verification method and prepare documents</h3>
+        <p>Meta offers several verification methods. The most reliable for most businesses:</p>
+        <ul>
+          <li><strong>Business documents</strong> — official registration certificate, utility bill in the company name, or a tax document (most common method)</li>
+          <li><strong>Domain verification</strong> — if your business email domain matches your registered website</li>
+        </ul>
+
+        <div class="callout callout--danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Common document rejection reasons
+          </div>
+          <ul>
+            <li>Document is expired</li>
+            <li>Business name on document does not <strong>exactly</strong> match the name in Meta Business Suite</li>
+            <li>Address on the document is illegible or cut off in the scan</li>
+            <li>Scan quality is too low — use at least 300 dpi</li>
+            <li>The document type is not accepted in your country (check the Meta Help Center for the accepted list)</li>
+            <li>You submitted a personal ID document instead of a business registration document</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Submit and wait</h3>
+        <p>After submitting your documents, the status in Business Settings → Security Center will show <strong>"In review"</strong>.</p>
+        <p>Meta's stated SLA is 5 business days. In practice, verification commonly takes <strong>2 to 14 days</strong>. You will receive an email when approved or rejected.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>Rejection and resubmission</h3>
+        <p>If rejected, Meta shows a rejection reason in Business Settings → Security Center. There is no limit on resubmission attempts — fix the flagged issue and resubmit.</p>
+
+        <div class="callout callout--warning">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+            Name mismatch is the #1 rejection cause
+          </div>
+          <p>If rejected for "name mismatch", compare the legal name on your document <em>character by character</em> against the business name in Meta Business Suite. Update one or the other so they match exactly before resubmitting.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">7</div>
+      <div class="step-content">
+        <h3>Messaging tiers after verification</h3>
+        <p>After verification, Meta assigns a messaging tier. Your tier determines how many unique users you can message per 24-hour window:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Tier</th><th>Unique users / 24 hours</th><th>How to reach it</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Tier 1</strong></td><td>1,000</td><td>Default after verification</td></tr>
+              <tr><td><strong>Tier 2</strong></td><td>10,000</td><td>Messaging 1,000 unique users in 7 days</td></tr>
+              <tr><td><strong>Tier 3</strong></td><td>100,000</td><td>Messaging 10,000 unique users in 7 days</td></tr>
+              <tr><td><strong>Unlimited</strong></td><td>Unrestricted</td><td>Application to Meta</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>Useful Links</h2>
+  <div class="ref-card">
+    <a href="https://business.facebook.com" target="_blank">Meta Business Suite <span>business.facebook.com</span></a>
+    <a href="https://www.facebook.com/business/help/2058515294227817" target="_blank">Business Verification Help Article <span>facebook.com/business/help</span></a>
+    <a href="https://www.facebook.com/business/help/1351482948562096" target="_blank">Accepted Documents by Country <span>facebook.com/business/help</span></a>
+  </div>
+
+  <div class="page-nav">
+    <a href="./3-ids-explained.html" class="btn btn--ghost">← Understanding IDs</a>
+    <a href="./5-phone-numbers.html" class="btn btn--primary">Next: Phone Number Registration →</a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-note">Written by <strong>Revaldo Nyasha Sithole</strong> based on direct, hands-on experience with the WhatsApp Cloud API. Always verify details against the official Meta documentation as APIs and policies change.</p>
+    <div class="footer-links">
+      <a href="https://developers.facebook.com/docs/whatsapp" target="_blank">Meta WhatsApp Docs</a>
+      <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">Cloud API Reference</a>
+      <a href="https://business.facebook.com" target="_blank">Meta Business Suite</a>
+      <a href="https://developers.facebook.com" target="_blank">Meta Developer Portal</a>
+      <a href="https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api" target="_blank">Meta Postman Collection</a>
+      <a href="https://www.youtube.com/@pms_code/videos" target="_blank">YouTube: @pms_code — Video Tutorials</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Revaldo Nyasha Sithole</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
