@@ -150,7 +150,7 @@
     });
 
     document.addEventListener('click', function (e) {
-      if (!drawer.contains(e.target) && e.target !== hamburger) {
+      if (!drawer.contains(e.target) && !hamburger.contains(e.target)) {
         drawer.classList.remove('open');
       }
     });
@@ -164,6 +164,115 @@
     });
   }
 
+  function initNavbarScroll() {
+    var navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          navbar.classList.toggle('scrolled', window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  function initScrollReveal() {
+    var selectors = ['.card', '.callout', '.ref-card', '.table-wrapper', '.diagram', '.code-block', '.page-nav', '.video-card'];
+    selectors.forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el) {
+        el.classList.add('reveal');
+      });
+    });
+    if (!window.IntersectionObserver) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -20px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
+  }
+
+  function initHeroAnimation() {
+    var hero = document.querySelector('.hero');
+    if (!hero) return;
+    var children = hero.querySelectorAll('.hero-badges, h1, .page-subtitle');
+    children.forEach(function (el, i) {
+      el.classList.add('hero-animate');
+      setTimeout(function () { el.classList.add('entered'); }, 80 + i * 130);
+    });
+  }
+
+  function initCardStagger() {
+    var grid = document.querySelector('.section-grid');
+    if (!grid) return;
+    var cards = grid.querySelectorAll('.section-card');
+    cards.forEach(function (c) { c.classList.add('reveal'); });
+    if (!window.IntersectionObserver) {
+      cards.forEach(function (c) { c.classList.add('visible'); });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var allCards = grid.querySelectorAll('.section-card');
+          allCards.forEach(function (card, i) {
+            setTimeout(function () { card.classList.add('visible'); }, i * 55);
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    observer.observe(grid);
+  }
+
+  function initMobileAnimations() {
+    if (!window.matchMedia || !window.matchMedia('(max-width: 640px)').matches) return;
+    if (!window.IntersectionObserver) return;
+
+    // Slide each step in from the left as it scrolls into view
+    var steps = document.querySelectorAll('.step');
+    if (steps.length) {
+      var stepObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('step-visible');
+            stepObs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
+
+      steps.forEach(function (s, i) {
+        s.classList.add('step-reveal');
+        // small stagger so consecutive steps don't fire at once
+        s.style.transitionDelay = (i % 4 * 60) + 'ms';
+        stepObs.observe(s);
+      });
+    }
+
+    // Fade h2 headings in as they scroll into view
+    var headings = document.querySelectorAll('.page-wrapper h2');
+    if (headings.length) {
+      var h2Obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('h2-visible');
+            h2Obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      headings.forEach(function (h) {
+        h.classList.add('h2-reveal');
+        h2Obs.observe(h);
+      });
+    }
+  }
+
   window.initPage = function () {
     updateProgress();
     initCodeCopy();
@@ -171,6 +280,11 @@
     initExternalLinks();
     initMobileNav();
     initChecklist();
+    initNavbarScroll();
+    initScrollReveal();
+    initHeroAnimation();
+    initCardStagger();
+    initMobileAnimations();
   };
 
   if (document.readyState === 'loading') {
